@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
 require_relative "symbols"
+require_relative "board"
 
 class Game
+  def initialize
+    @board = Board.new
+  end
+
   def play
-    introduction 
+    introduction
+    @board.print_board
   end
 
   private
@@ -22,7 +28,7 @@ class Game
     [3] To resume from saved game
 
     HEREDOC
-    loop do     
+    loop do
       print "Input: "
       input = gets[0].to_i
       break if input.between?(1,1)
