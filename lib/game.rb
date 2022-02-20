@@ -7,14 +7,17 @@ class Game
   def initialize
     @board = Board.new
     @current = "White"
-    @coordinates = []
+    @origin = []
+    @movement = []
   end
 
   def play
     introduction
     @board.print_board
-    @coordinates = select_piece
-    @board.color_move(@coordinates)
+    @origin = select_piece
+    @board.color_move(@origin)
+    @board.print_board
+    @board.move_piece(select_move)
     @board.print_board
   end
 
@@ -24,10 +27,23 @@ class Game
     puts "enter [1] to save, or [0] to quit."
     loop do
       print "Input: "
-      @coordinates = gets
-      row = @coordinates[1].to_i - 1
-      column = @coordinates[0].to_s.downcase.ord - 97
-      return [row, column] if row.between?(0,7) && column.between?(0,7)
+      @origin = gets
+      row = @origin[1].to_i - 1
+      column = @origin[0].to_s.downcase.ord - 97
+      return [row, column] if row.between?(0,7) && column.between?(0,7) && @board.valid_select?(row, column, @current)
+
+      puts "Invalid input.. Try again"
+    end
+  end
+
+  def select_move
+    puts "Enter coordinates of the of the location you want to move,"
+    loop do
+      print "Input: "
+      @movement = gets
+      row = @movement[1].to_i - 1
+      column = @movement[0].to_s.downcase.ord - 97
+      return [@origin[0], @origin[1], row, column] if @board.valid_area?(row, column)
 
       puts "Invalid input.. Try again"
     end

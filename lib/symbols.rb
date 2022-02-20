@@ -14,10 +14,6 @@ module Symbols
     " \u2654 "
   end
 
-  def b_king
-    " \u2654 "
-  end
-
   def b_queen
     " \u2655 "
   end
@@ -36,6 +32,10 @@ module Symbols
 
   def b_pawn
     " \u2659 "
+  end
+
+  def black_pieces
+    [" \u2654 ", " \u2655 ", " \u2656 ", " \u2657 ", " \u2658 ", " \u2659 "]
   end
 
   def w_king
@@ -60,6 +60,10 @@ module Symbols
 
   def w_pawn
     " \u265F "
+  end
+
+  def white_pieces
+    [" \u265A ", " \u265B ", " \u265C ", " \u265D ", " \u265E ", " \u265F "]
   end
 
 end
