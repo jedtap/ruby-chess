@@ -13,12 +13,14 @@ class Game
 
   def play
     introduction
-    @board.print_board
-    @origin = select_piece
-    @board.color_move(@origin)
-    @board.print_board
-    @board.move_piece(select_move)
-    @board.print_board
+    loop do
+      @board.print_board
+      @origin = select_piece
+      @board.color_move(@origin)
+      @board.print_board
+      @board.move_piece(select_move)
+      @current == "White" ? @current = "Black" : @current = "White"
+    end
   end
 
   def select_piece

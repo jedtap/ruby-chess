@@ -45,9 +45,10 @@ class Board
       #when b_bishop || w_bishop
       #when b_rook || w_rook
       when b_pawn
-        return true if @board[row-1][column] == empty
-        return true if white_pieces.any?(@board[row-1][column+1])
-        return true if white_pieces.any?(@board[row-1][column-1])
+        @color[row-1][column] = 41 if @board[row-1][column] == empty
+        @color[row-1][column+1] = 41 if white_pieces.any?@board[row-1][column+1]
+        @color[row-1][column-1] = 41 if white_pieces.any?@board[row-1][column-1]
+        @color[row-2][column] = 41 if @board[row-2][column] == empty && row == 6
       when w_pawn
         @color[row+1][column] = 41 if @board[row+1][column] == empty
         @color[row+1][column+1] = 41 if black_pieces.any?@board[row+1][column+1]
