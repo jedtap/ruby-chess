@@ -15,7 +15,7 @@ class Game
     introduction
     loop do
       @board.print_board
-      @origin = select_piece
+      select_piece
       @board.color_move(@origin)
       @board.print_board
       @board.move_piece(select_move)
@@ -32,7 +32,8 @@ class Game
       @origin = gets
       row = @origin[1].to_i - 1
       column = @origin[0].to_s.downcase.ord - 97
-      return [row, column] if row.between?(0,7) && column.between?(0,7) && @board.valid_select?(row, column, @current)
+      @origin = [row, column]
+      return if row.between?(0,7) && column.between?(0,7) && @board.valid_select?(row, column, @current)
 
       puts "Invalid input.. Try again"
     end
