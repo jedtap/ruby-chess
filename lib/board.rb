@@ -20,9 +20,14 @@ class Board
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
     #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    
+    @board[1] = ["#{w_rook}","#{w_rook}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[6] = ["#{b_rook}","#{b_rook}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    
+    
     @dark = 44
     @light = 1
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
@@ -147,30 +152,90 @@ class Board
       end
       @promotion = true if (row+1) == 7
       @pawn_color = "White"
+    
+    when b_rook
+      if (column+1).between?(0,7)
+        for tile in 1..7 
+          break if column+tile > 7
+          break if black_pieces.any?(@board[row][column+tile])
+          @color[row][column+tile] = 41
+          break if white_pieces.any?(@board[row][column+tile])
+        end
+      end
 
+      if (row+1).between?(0,7)
+        for tile in 1..7 
+          break if row+tile > 7
+          break if black_pieces.any?(@board[row+tile][column])
+          @color[row+tile][column] = 41
+          break if white_pieces.any?(@board[row+tile][column])
+        end
+      end
+
+      if (column-1).between?(0,7)
+        for tile in 1..7 
+          break if column-tile < 0
+          break if black_pieces.any?(@board[row][column-tile])
+          @color[row][column-tile] = 41
+          break if white_pieces.any?(@board[row][column-tile])
+        end
+      end
+
+      if (row-1)
+        for tile in 1..7 
+          break if row-tile < 0
+          break if black_pieces.any?(@board[row-tile][column])
+          @color[row-tile][column] = 41
+          break if white_pieces.any?(@board[row-tile][column])
+        end
+      end
+
+      return false unless @color.flatten.any?(41)
+    when w_rook
+      if (column+1).between?(0,7)
+        for tile in 1..7 
+          break if column+tile > 7
+          break if white_pieces.any?(@board[row][column+tile])
+          @color[row][column+tile] = 41
+          break if black_pieces.any?(@board[row][column+tile])
+        end
+      end
+
+      if (row+1).between?(0,7)
+        for tile in 1..7 
+          break if row+tile > 7
+          break if white_pieces.any?(@board[row+tile][column])
+          @color[row+tile][column] = 41
+          break if black_pieces.any?(@board[row+tile][column])
+        end
+      end
+
+      if (column-1).between?(0,7)
+        for tile in 1..7 
+          break if column-tile < 0
+          break if white_pieces.any?(@board[row][column-tile])
+          @color[row][column-tile] = 41
+          break if black_pieces.any?(@board[row][column-tile])
+        end
+      end
+
+      if (row-1)
+        for tile in 1..7 
+          break if row-tile < 0
+          break if white_pieces.any?(@board[row-tile][column])
+          @color[row-tile][column] = 41
+          break if black_pieces.any?(@board[row-tile][column])
+        end
+      end
+
+      return false unless @color.flatten.any?(41)
 
     #when b_king || w_king
     #when b_queen || w_queen
     #when b_knight || w_knight
     #when b_bishop || w_bishop
-    # when b_rook
-    #   return true if @board[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
-    #   return true if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
-    #   return true if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
-    #   return true if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
-    #   false
-    # when w_rook
-    #   return true if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
-    #   return true if @board[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
-    #   return true if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
-    #   return true if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
-    #   return false
-
-
-
 
     end # end of case
-  
     @en_passant_turn -= 1
     true
   end # end of valid moves!
@@ -179,70 +244,6 @@ class Board
     row     = coordinates[0]
     column  = coordinates[1]
     @color[row][column] = 42
-  
-
-
-
-
-
-    # case piece
-      #when b_king || w_king
-      #when b_queen || w_queen
-      #when b_knight || w_knight
-      #when b_bishop || w_bishop
-      # when b_rook
-      #   for tile in 1..7 
-      #     break if column+tile > 7
-      #     break if black_pieces.any?(@board[row][column+tile])
-      #     @color[row][column+tile] = 41
-      #     break if white_pieces.any?(@board[row][column+tile])
-      #   end
-      #   for tile in 1..7 
-      #     break if row+tile > 7
-      #     break if black_pieces.any?(@board[row+tile][column])
-      #     @color[row][column+tile] = 41
-      #     break if white_pieces.any?(@board[row+tile][column])
-      #   end
-      #   for tile in 1..7 
-      #     break if column-tile < 0
-      #     break if black_pieces.any?(@board[row][column-tile])
-      #     @color[row][column+tile] = 41
-      #     break if white_pieces.any?(@board[row][column-tile])
-      #   end
-      #   for tile in 1..7 
-      #     break if row-tile < 0
-      #     break if black_pieces.any?(@board[row-tile][column])
-      #     @color[row][column+tile] = 41
-      #     break if white_pieces.any?(@board[row-tile][column])
-      #   end
-
-
-      # when w_rook
-      #   for tile in 1..7 
-      #     break if column+tile > 7
-      #     break if white_pieces.any?(@board[row][column+tile])
-      #     @color[row][column+tile] = 41
-      #     break if black_pieces.any?(@board[row][column+tile])
-      #   end
-      #   for tile in 1..7 
-      #     break if row+tile > 7
-      #     break if white_pieces.any?(@board[row+tile][column])
-      #     @color[row][column+tile] = 41
-      #     break if black_pieces.any?(@board[row+tile][column])
-      #   end
-      #   for tile in 1..7 
-      #     break if column-tile < 0
-      #     break if white_pieces.any?(@board[row][column-tile])
-      #     @color[row][column+tile] = 41
-      #     break if black_pieces.any?(@board[row][column-tile])
-      #   end
-      #   for tile in 1..7 
-      #     break if row-tile < 0
-      #     break if white_pieces.any?(@board[row-tile][column])
-      #     @color[row][column+tile] = 41
-      #     break if black_pieces.any?(@board[row-tile][column])
-      #   end
-  
   end # end of color moves
 
 
