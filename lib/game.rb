@@ -16,7 +16,7 @@ class Game
     loop do
       @board.print_board
       select_piece
-      @board.color_move(@origin)
+      @board.color_origin(@origin)
       @board.print_board
       @board.move_piece(select_move)
       @current == "White" ? @current = "Black" : @current = "White"
@@ -46,7 +46,7 @@ class Game
       @movement = gets
       row = @movement[1].to_i - 1
       column = @movement[0].to_s.downcase.ord - 97
-      return [@origin[0], @origin[1], row, column] if @board.valid_area?(row, column)
+      return [@origin[0], @origin[1], row, column, @board.valid_area?(row, column)] if @board.valid_area?(row, column)
 
       puts "Invalid input.. Try again"
     end
@@ -75,6 +75,5 @@ class Game
       puts "Invalid input.. Try again."
     end
   end 
-
 
 end # End of Game class!

@@ -2,11 +2,11 @@
 
 # Color cheat sheet:
 #   bg_black    40
-#   bg_red      41
-#   bg_green    42
+#   bg_red      41 --> Viable move
+#   bg_green    42 --> Current piece
 #   bg_brown    43
-#   bg_blue     44
-#   bg_magenta  45
+#   bg_blue     44 --> Dark color
+#   bg_magenta  45 --> En passant capture
 #   bg_cyan     46
 #   bg_gray     47
 
@@ -26,11 +26,18 @@ class Board
     @dark = 44
     @light = 1
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
+
+    @en_passant = []
+    @en_passant_turn = 0
+    @promotion = false
   end
 
   def print_board
+    # Clear screen & initialize the label for the 8 rows
     Gem.win_platform? ? (system "cls") : (system "clear")
     row_num = 8
+
+    # Main board printing
     puts "    a  b  c  d  e  f  g  h"
     for row in (7).downto(0)
       print " #{row_num} "
@@ -56,6 +63,88 @@ class Board
 
   def valid_moves?(row, column, piece)
     case piece
+    when b_pawn
+      return false unless (row-1).between?(0,7)
+      
+      if @board[row-1][column] == empty
+        @color[row-1][column] = 41
+      end
+      if (column+1).between?(0,7)
+        @color[row-1][column+1] = 41 if white_pieces.any?(@board[row-1][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row-1][column-1] = 41 if white_pieces.any?(@board[row-1][column-1])
+      end
+
+      # En-passant attack
+      if @en_passant_turn > 0
+        if @en_passant.length >= 3
+          @color[row-1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[2]]
+        end
+        if @en_passant.length >= 2
+          @color[row-1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[1]]
+        end
+      end
+
+      # First move pawn cases: double step & en-passant
+      if row == 6
+        @color[row-2][column] = 41 if @board[row-2][column] == empty
+        @en_passant = [column]
+        
+        # Save pawns eligible to do en-passant against current player
+        # En passant turn is set to 2: 1 turn after current player and other for enemy turn 
+        if (column-1).between?(0,7)
+          @en_passant << column-1 if @board[row-2][column-1] == w_pawn
+          @en_passant_turn = 2
+        end
+        if (column+1).between?(0,7)
+          @en_passant << column+1 if @board[row-2][column+1] == w_pawn
+          @en_passant_turn = 2
+        end
+      end
+      @promotion = true if (row-1) == 0
+    when w_pawn
+      return false unless (row+1).between?(0,7)
+      
+      if @board[row+1][column] == empty
+        @color[row+1][column] = 41
+      end
+      if (column+1).between?(0,7)
+        @color[row+1][column+1] = 41 if black_pieces.any?(@board[row+1][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row+1][column-1] = 41 if black_pieces.any?(@board[row+1][column-1])
+      end
+
+      # En-passant attack
+      if @en_passant_turn > 0
+        if @en_passant.length >= 3
+          @color[row+1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[2]]
+        end
+        if @en_passant.length >=2
+          @color[row+1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[1]]
+        end
+      end
+
+      # First move pawn cases: double step & en-passant
+      if row == 1
+        @color[row+2][column] = 41 if @board[row+2][column] == empty
+        @en_passant = [column]
+        
+        # Save pawns eligible to do en-passant against current player
+        # En passant turn is set to 2: 1 turn after current player and other for enemy turn 
+        if (column-1).between?(0,7)
+          @en_passant << column-1 if @board[row+2][column-1] == b_pawn
+          @en_passant_turn = 2
+        end
+        if (column+1).between?(0,7)
+          @en_passant << column+1 if @board[row+2][column+1] == b_pawn
+          @en_passant_turn = 2
+        end
+      end
+      @promotion = true if (row+1) == 7
+
+
     #when b_king || w_king
     #when b_queen || w_queen
     #when b_knight || w_knight
@@ -72,48 +161,19 @@ class Board
     #   return true if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
     #   return true if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
     #   return false
-    when b_pawn
-      return false unless (row-1).between?(0,7)
-      
-      if @board[row-1][column] == empty
-        @color[row-1][column] = 41
-      end
-      if (column+1).between?(0,7)
-        @color[row-1][column+1] = 41 if white_pieces.any?(@board[row-1][column+1])
-      end
-      if (column-1).between?(0,7)
-        @color[row-1][column-1] = 41 if white_pieces.any?(@board[row-1][column-1])
-      end
-      if row == 6
-        @color[row-2][column] = 41 if @board[row-1][column] == empty && @board[row-2][column] == empty
-      end
-
-      true
-    when w_pawn
-      return false unless (row+1).between?(0,7)
-      
-      if @board[row+1][column] == empty
-        @color[row+1][column] = 41
-      end
-      if (column+1).between?(0,7)
-        @color[row+1][column+1] = 41 if black_pieces.any?(@board[row+1][column+1])
-      end
-      if (column-1).between?(0,7)
-        @color[row+1][column-1] = 41 if black_pieces.any?(@board[row+1][column-1])
-      end
-      if row == 1
-        @color[row+2][column] = 41 if @board[row+1][column] == empty && @board[row+2][column] == empty
-      end
-
-      true
-    end
 
 
+
+
+    end # end of case
+  
+    @en_passant_turn -= 1
+    true
   end # end of valid moves!
 
-  def color_move(coordinates)
-    row = coordinates[0]
-    column = coordinates[1]
+  def color_origin(coordinates)
+    row     = coordinates[0]
+    column  = coordinates[1]
     @color[row][column] = 42
   
 
@@ -183,20 +243,36 @@ class Board
 
 
   def valid_area?(row, column)
-    @color[row][column] == 41 ? true : false
+    return true if @color[row][column] == 41
+    return "en-passant" if @color[row][column] == 45
+    false
   end
 
   def move_piece(coordinates)
+    # Get row and column values of origin and target move
     row_orig = coordinates[0]
     col_orig = coordinates[1]
     row_move = coordinates[2]
     col_move = coordinates[3]
     
+    # Moving piece occupies the new tile and leaves an empty tile behind
     @board[row_move][col_move] = @board[row_orig][col_orig]
     @board[row_orig][col_orig] = empty
+
+    # Eliminate en-passant piece
+    @board[row_orig][col_move] = empty if coordinates[4] == "en-passant"
+
+    # Pawn promotion
+    pawn_promotion if @promotion == true
+    @promotion = false
 
     # Restore board color
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
   end
+
+  def pawn_promotion
+    
+  end
+
 
 end # End of board class!

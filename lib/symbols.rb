@@ -1,11 +1,6 @@
 # frozen_string_literal: true
 
 module Symbols
-  def test_item
-    "\e[31m\u25cf\e[0m"
-    "\u25cb"
-  end
-
   def empty
     "   "
   end
