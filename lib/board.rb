@@ -16,16 +16,16 @@ class Board
   include Symbols
 
   def initialize
-    #@board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
+    # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
-    @board[1] = ["#{w_rook}","#{w_rook}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_rook}","#{b_rook}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    @board[1] = ["#{w_king}","#{w_king}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[6] = ["#{b_king}","#{b_king}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     
     
     @dark = 44
@@ -229,16 +229,78 @@ class Board
       end
 
       return false unless @color.flatten.any?(41)
+    
+    when b_king
+      if (column+1).between?(0,7)
+        @color[row][column+1] = 41 if @board[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
+        if (row+1).between?(0,7)
+          @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || white_pieces.any?(@board[row-1][column+1])
+        end
+      end
+      
+      if (column-1).between?(0,7)
+        @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
+        if (row+1).between?(0,7)
+          @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
+        end
+      end
+
+      if (row+1).between?(0,7)
+        @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
+      end
+      return false unless @color.flatten.any?(41)
+
+    when w_king
+      if (column+1).between?(0,7)
+        @color[row][column+1] = 41 if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
+        if (row+1).between?(0,7)
+          @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
+        end
+      end
+      
+      if (column-1).between?(0,7)
+        @color[row][column-1] = 41 if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
+        if (row+1).between?(0,7)
+          @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
+        end
+      end
+
+      if (row+1).between?(0,7)
+        @color[row+1][column] = 41 if @board[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column] = 41 if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
+      end
+      return false unless @color.flatten.any?(41)
+ 
+
+
+    end # end of case
+    @en_passant_turn -= 1
+    true
+  end # end of valid moves!
 
     #when b_king || w_king
     #when b_queen || w_queen
     #when b_knight || w_knight
     #when b_bishop || w_bishop
 
-    end # end of case
-    @en_passant_turn -= 1
-    true
-  end # end of valid moves!
+
 
   def color_origin(coordinates)
     row     = coordinates[0]
