@@ -29,7 +29,9 @@ class Board
 
     @en_passant = []
     @en_passant_turn = 0
+
     @promotion = false
+    @pawn_color = nil
   end
 
   def print_board
@@ -103,6 +105,7 @@ class Board
         end
       end
       @promotion = true if (row-1) == 0
+      @pawn_color = "Black"
     when w_pawn
       return false unless (row+1).between?(0,7)
       
@@ -143,6 +146,7 @@ class Board
         end
       end
       @promotion = true if (row+1) == 7
+      @pawn_color = "White"
 
 
     #when b_king || w_king
@@ -263,15 +267,42 @@ class Board
     @board[row_orig][col_move] = empty if coordinates[4] == "en-passant"
 
     # Pawn promotion
-    pawn_promotion if @promotion == true
+    pawn_promotion(row_move, col_move) if @promotion == true
     @promotion = false
 
     # Restore board color
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
   end
 
-  def pawn_promotion
+  def pawn_promotion(row, column)
+    input = 0
+    puts <<~HEREDOC
+    Pawn Promotion!
+    Enter a number to upgrade your pawn to a new piece. 
     
+    [1] Queen
+    [2] Knight
+    [3] Rook
+    [4] Bishop
+
+    HEREDOC
+    loop do
+      print "Input: "
+      input = gets[0].to_i
+      break if input.between?(1,4)
+
+      puts "Invalid input.. Try again."
+    end
+    case input
+    when 1
+      @pawn_color == "White" ? @board[row][column] = w_queen : @board[row][column] = b_queen
+    when 2
+      @pawn_color == "White" ? @board[row][column] = w_knight : @board[row][column] = b_knight
+    when 3
+      @pawn_color == "White" ? @board[row][column] = w_rook : @board[row][column] = b_rook
+    when 4
+      @pawn_color == "White" ? @board[row][column] = w_bishop : @board[row][column] = b_bishop
+    end
   end
 
 
