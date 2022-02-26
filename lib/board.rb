@@ -4,7 +4,7 @@
 #   bg_black    40
 #   bg_red      41 --> Viable move
 #   bg_green    42 --> Current piece
-#   bg_brown    43
+#   bg_brown    43 --> Castling
 #   bg_blue     44 --> Dark color
 #   bg_magenta  45 --> En passant capture
 #   bg_cyan     46
@@ -19,13 +19,15 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
-    @board[1] = ["#{w_king}","#{w_king}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_king}","#{b_king}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    # @board[1] = ["#{w_king}","#{w_king}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    # @board[6] = ["#{b_king}","#{b_king}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    #@board[0] = ["#{w_rook}","#{empty}","#{empty}","#{empty}","#{w_king}","#{empty}","#{empty}","#{w_rook}"]
+    #@board[7] = ["#{b_rook}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{b_rook}"]
     
     
     @dark = 44
@@ -37,6 +39,9 @@ class Board
 
     @promotion = false
     @pawn_color = nil
+
+    @b_castling = [true, true, true]
+    @w_castling = [true, true, true]
   end
 
   def print_board
@@ -154,82 +159,17 @@ class Board
       @pawn_color = "White"
     
     when b_rook
-      if (column+1).between?(0,7)
-        for tile in 1..7 
-          break if column+tile > 7
-          break if black_pieces.any?(@board[row][column+tile])
-          @color[row][column+tile] = 41
-          break if white_pieces.any?(@board[row][column+tile])
-        end
-      end
-
-      if (row+1).between?(0,7)
-        for tile in 1..7 
-          break if row+tile > 7
-          break if black_pieces.any?(@board[row+tile][column])
-          @color[row+tile][column] = 41
-          break if white_pieces.any?(@board[row+tile][column])
-        end
-      end
-
-      if (column-1).between?(0,7)
-        for tile in 1..7 
-          break if column-tile < 0
-          break if black_pieces.any?(@board[row][column-tile])
-          @color[row][column-tile] = 41
-          break if white_pieces.any?(@board[row][column-tile])
-        end
-      end
-
-      if (row-1)
-        for tile in 1..7 
-          break if row-tile < 0
-          break if black_pieces.any?(@board[row-tile][column])
-          @color[row-tile][column] = 41
-          break if white_pieces.any?(@board[row-tile][column])
-        end
-      end
-
+      b_rook_moveset(row, column)
       return false unless @color.flatten.any?(41)
+
+      @b_castling[0] = false if row == 7 && column == 0
+      @b_castling[2] = false if row == 7 && column == 7
     when w_rook
-      if (column+1).between?(0,7)
-        for tile in 1..7 
-          break if column+tile > 7
-          break if white_pieces.any?(@board[row][column+tile])
-          @color[row][column+tile] = 41
-          break if black_pieces.any?(@board[row][column+tile])
-        end
-      end
-
-      if (row+1).between?(0,7)
-        for tile in 1..7 
-          break if row+tile > 7
-          break if white_pieces.any?(@board[row+tile][column])
-          @color[row+tile][column] = 41
-          break if black_pieces.any?(@board[row+tile][column])
-        end
-      end
-
-      if (column-1).between?(0,7)
-        for tile in 1..7 
-          break if column-tile < 0
-          break if white_pieces.any?(@board[row][column-tile])
-          @color[row][column-tile] = 41
-          break if black_pieces.any?(@board[row][column-tile])
-        end
-      end
-
-      if (row-1)
-        for tile in 1..7 
-          break if row-tile < 0
-          break if white_pieces.any?(@board[row-tile][column])
-          @color[row-tile][column] = 41
-          break if black_pieces.any?(@board[row-tile][column])
-        end
-      end
-
+      w_rook_moveset(row, column)
       return false unless @color.flatten.any?(41)
-    
+
+      @w_castling[0] = false if row == 0 && column == 0
+      @w_castling[2] = false if row == 0 && column == 7     
     when b_king
       if (column+1).between?(0,7)
         @color[row][column+1] = 41 if @board[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
@@ -257,7 +197,19 @@ class Board
       if (row-1).between?(0,7)
         @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
       end
+      
+      # Castling logic
+      if @b_castling[1] == true
+        if @b_castling[0] == true && @board[row][column-1] == empty && @board[row][column-2] == empty && @board[row][column-3] == empty
+          @color[row][column-2] = 43
+        end
+        if @b_castling[2] == true && @board[row][column+1] == empty && @board[row][column+2]
+          @color[row][column+2] = 43
+        end
+      end
+
       return false unless @color.flatten.any?(41)
+      @b_castling[1] = false
 
     when w_king
       if (column+1).between?(0,7)
@@ -286,32 +238,113 @@ class Board
       if (row-1).between?(0,7)
         @color[row-1][column] = 41 if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
       end
+
+      # Castling logic
+      if @w_castling[1] == true
+        if @w_castling[0] == true && @board[row][column-1] == empty && @board[row][column-2] == empty && @board[row][column-3] == empty
+          @color[row][column-2] = 43
+        end
+        if @w_castling[2] == true && @board[row][column+1] == empty && @board[row][column+2] == empty
+          @color[row][column+2] = 43
+        end
+      end
+
       return false unless @color.flatten.any?(41)
- 
+      @w_castling[1] = false
 
-
+    when b_knight
+      if (column+2).between?(0,7)
+        if (row+1).between?(0,7)
+          @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || white_pieces.any?(@board[row+1][column+2])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || white_pieces.any?(@board[row-1][column+2])
+        end
+      end
+      if (column-2).between?(0,7)
+        if (row+1).between?(0,7)
+          @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || white_pieces.any?(@board[row+1][column-2])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || white_pieces.any?(@board[row-1][column-2])
+        end
+      end
+      if (row+2).between?(0,7)
+        if (column+1).between?(0,7)
+          @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || white_pieces.any?(@board[row+2][column+1])
+        end
+        if (column-1).between?(0,7)
+          @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || white_pieces.any?(@board[row+2][column-1])
+        end
+      end
+      if (row-2).between?(0,7)
+        if (column+1).between?(0,7)
+          @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || white_pieces.any?(@board[row-2][column+1])
+        end
+        if (column-1).between?(0,7)
+          @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || white_pieces.any?(@board[row-2][column-1])
+        end
+      end      
+    when w_knight
+      if (column+2).between?(0,7)
+        if (row+1).between?(0,7)
+          @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || black_pieces.any?(@board[row+1][column+2])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || black_pieces.any?(@board[row-1][column+2])
+        end
+      end
+      if (column-2).between?(0,7)
+        if (row+1).between?(0,7)
+          @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || black_pieces.any?(@board[row+1][column-2])
+        end
+        if (row-1).between?(0,7)
+          @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || black_pieces.any?(@board[row-1][column-2])
+        end
+      end
+      if (row+2).between?(0,7)
+        if (column+1).between?(0,7)
+          @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || black_pieces.any?(@board[row+2][column+1])
+        end
+        if (column-1).between?(0,7)
+          @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || black_pieces.any?(@board[row+2][column-1])
+        end
+      end
+      if (row-2).between?(0,7)
+        if (column+1).between?(0,7)
+          @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || black_pieces.any?(@board[row-2][column+1])
+        end
+        if (column-1).between?(0,7)
+          @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || black_pieces.any?(@board[row-2][column-1])
+        end
+      end
+    when b_bishop
+      b_bishop_moveset(row, column)
+    when w_bishop
+      w_bishop_moveset(row, column)
+    when b_queen
+      b_rook_moveset(row, column)
+      b_bishop_moveset(row,column)
+    when w_queen
+      w_rook_moveset(row, column)
+      w_bishop_moveset(row,column)
     end # end of case
+
+    return false unless @color.flatten.any?(41)
     @en_passant_turn -= 1
     true
   end # end of valid moves!
-
-    #when b_king || w_king
-    #when b_queen || w_queen
-    #when b_knight || w_knight
-    #when b_bishop || w_bishop
-
-
 
   def color_origin(coordinates)
     row     = coordinates[0]
     column  = coordinates[1]
     @color[row][column] = 42
-  end # end of color moves
-
+  end
 
   def valid_area?(row, column)
     return true if @color[row][column] == 41
     return "en-passant" if @color[row][column] == 45
+    return "castling" if @color[row][column] == 43
     false
   end
 
@@ -328,6 +361,9 @@ class Board
 
     # Eliminate en-passant piece
     @board[row_orig][col_move] = empty if coordinates[4] == "en-passant"
+
+    # Castling: move rook to the opposite side of King
+    castling(row_move, col_move) if coordinates[4] == "castling"
 
     # Pawn promotion
     pawn_promotion(row_move, col_move) if @promotion == true
@@ -368,5 +404,173 @@ class Board
     end
   end
 
+  def castling(row, column)
+    if row == 7 && column == 2
+      @board[row][3] = @board[row][0]
+      @board[row][0] = empty
+    elsif row == 7 && column == 6
+      @board[row][5] = @board[row][7]
+      @board[row][7] = empty
+    elsif row == 0 && column == 2
+      @board[row][3] = @board[row][0]
+      @board[row][0] = empty
+    elsif row == 0 && column == 6
+      @board[row][5] = @board[row][7]
+      @board[row][7] = empty
+    end
+  end
+
+  def b_rook_moveset(row, column)
+    if (column+1).between?(0,7)
+      for tile in 1..7 
+        break if column+tile > 7
+        break if black_pieces.any?(@board[row][column+tile])
+        @color[row][column+tile] = 41
+        break if white_pieces.any?(@board[row][column+tile])
+      end
+    end
+
+    if (row+1).between?(0,7)
+      for tile in 1..7 
+        break if row+tile > 7
+        break if black_pieces.any?(@board[row+tile][column])
+        @color[row+tile][column] = 41
+        break if white_pieces.any?(@board[row+tile][column])
+      end
+    end
+
+    if (column-1).between?(0,7)
+      for tile in 1..7 
+        break if column-tile < 0
+        break if black_pieces.any?(@board[row][column-tile])
+        @color[row][column-tile] = 41
+        break if white_pieces.any?(@board[row][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7)
+      for tile in 1..7 
+        break if row-tile < 0
+        break if black_pieces.any?(@board[row-tile][column])
+        @color[row-tile][column] = 41
+        break if white_pieces.any?(@board[row-tile][column])
+      end
+    end
+
+  end
+  
+  def w_rook_moveset(row, column)
+    if (column+1).between?(0,7)
+      for tile in 1..7 
+        break if column+tile > 7
+        break if white_pieces.any?(@board[row][column+tile])
+        @color[row][column+tile] = 41
+        break if black_pieces.any?(@board[row][column+tile])
+      end
+    end
+
+    if (row+1).between?(0,7)
+      for tile in 1..7 
+        break if row+tile > 7
+        break if white_pieces.any?(@board[row+tile][column])
+        @color[row+tile][column] = 41
+        break if black_pieces.any?(@board[row+tile][column])
+      end
+    end
+
+    if (column-1).between?(0,7)
+      for tile in 1..7 
+        break if column-tile < 0
+        break if white_pieces.any?(@board[row][column-tile])
+        @color[row][column-tile] = 41
+        break if black_pieces.any?(@board[row][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7)
+      for tile in 1..7 
+        break if row-tile < 0
+        break if white_pieces.any?(@board[row-tile][column])
+        @color[row-tile][column] = 41
+        break if black_pieces.any?(@board[row-tile][column])
+      end
+    end
+  end
+
+  def b_bishop_moveset(row, column)
+    if (column+1).between?(0,7) && (row+1).between?(0,7)
+      for tile in 1..7 
+        break if column+tile > 7 || row+tile > 7
+        break if black_pieces.any?(@board[row+tile][column+tile])
+        @color[row+tile][column+tile] = 41
+        break if white_pieces.any?(@board[row+tile][column+tile])
+      end
+    end
+
+    if (column-1).between?(0,7) && (row+1).between?(0,7)
+      for tile in 1..7 
+        break if column-tile < 0 || row+tile > 7
+        break if black_pieces.any?(@board[row+tile][column-tile])
+        @color[row+tile][column-tile] = 41
+        break if white_pieces.any?(@board[row+tile][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7) && (column-1).between?(0,7)
+      for tile in 1..7
+        break if row-tile < 0 || column-tile < 0
+        break if black_pieces.any?(@board[row-tile][column-tile])
+        @color[row-tile][column-tile] = 41
+        break if white_pieces.any?(@board[row-tile][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7) && (column+1).between?(0,7)
+      for tile in 1..7 
+        break if row-tile > 7 || column+tile < 0
+        break if black_pieces.any?(@board[row-tile][column+tile])
+        @color[row-tile][column+tile] = 41
+        break if white_pieces.any?(@board[row-tile][column+tile])
+      end
+    end
+  end
+
+  def w_bishop_moveset(row, column)
+    if (column+1).between?(0,7) && (row+1).between?(0,7)
+      for tile in 1..7 
+        break if column+tile > 7 || row+tile > 7
+        break if white_pieces.any?(@board[row+tile][column+tile])
+        @color[row+tile][column+tile] = 41
+        break if black_pieces.any?(@board[row+tile][column+tile])
+      end
+    end
+
+    if (column-1).between?(0,7) && (row+1).between?(0,7)
+      for tile in 1..7 
+        break if column-tile < 0 || row+tile > 7
+        break if white_pieces.any?(@board[row+tile][column-tile])
+        @color[row+tile][column-tile] = 41
+        break if black_pieces.any?(@board[row+tile][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7) && (column-1).between?(0,7)
+      for tile in 1..7
+        break if row-tile < 0 || column-tile < 0
+        break if white_pieces.any?(@board[row-tile][column-tile])
+        @color[row-tile][column-tile] = 41
+        break if black_pieces.any?(@board[row-tile][column-tile])
+      end
+    end
+
+    if (row-1).between?(0,7) && (column+1).between?(0,7)
+      for tile in 1..7 
+        break if row-tile > 7 || column+tile < 0
+        break if white_pieces.any?(@board[row-tile][column+tile])
+        @color[row-tile][column+tile] = 41
+        break if black_pieces.any?(@board[row-tile][column+tile])
+      end
+    end
+  end
 
 end # End of board class!
