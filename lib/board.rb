@@ -19,16 +19,10 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-    
-    # @board[1] = ["#{w_king}","#{w_king}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    # @board[6] = ["#{b_king}","#{b_king}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    #@board[0] = ["#{w_rook}","#{empty}","#{empty}","#{empty}","#{w_king}","#{empty}","#{empty}","#{w_rook}"]
-    #@board[7] = ["#{b_rook}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{b_rook}"]
-    
+    #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
     @dark = 44
     @light = 1
@@ -42,6 +36,8 @@ class Board
 
     @b_castling = [true, true, true]
     @w_castling = [true, true, true]
+
+    @eliminated = nil
   end
 
   def print_board
@@ -180,7 +176,6 @@ class Board
           @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || white_pieces.any?(@board[row-1][column+1])
         end
       end
-      
       if (column-1).between?(0,7)
         @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
         if (row+1).between?(0,7)
@@ -190,7 +185,6 @@ class Board
           @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
         end
       end
-
       if (row+1).between?(0,7)
         @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
       end
@@ -207,10 +201,7 @@ class Board
           @color[row][column+2] = 43
         end
       end
-
       return false unless @color.flatten.any?(41)
-      @b_castling[1] = false
-
     when w_king
       if (column+1).between?(0,7)
         @color[row][column+1] = 41 if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
@@ -221,7 +212,6 @@ class Board
           @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
         end
       end
-      
       if (column-1).between?(0,7)
         @color[row][column-1] = 41 if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
         if (row+1).between?(0,7)
@@ -231,7 +221,6 @@ class Board
           @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
         end
       end
-
       if (row+1).between?(0,7)
         @color[row+1][column] = 41 if @board[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
       end
@@ -250,8 +239,6 @@ class Board
       end
 
       return false unless @color.flatten.any?(41)
-      @w_castling[1] = false
-
     when b_knight
       if (column+2).between?(0,7)
         if (row+1).between?(0,7)
@@ -354,10 +341,22 @@ class Board
     col_orig = coordinates[1]
     row_move = coordinates[2]
     col_move = coordinates[3]
-    
+
     # Moving piece occupies the new tile and leaves an empty tile behind
+    @eliminated = @board[row_move][col_move]
     @board[row_move][col_move] = @board[row_orig][col_orig]
     @board[row_orig][col_orig] = empty
+
+    # Deactivate castling for a rook w/ zero moves that got eliminated
+    if @eliminated == b_rook && row_move == 7 && col_move == 0
+      @b_castling[0] = false
+    elsif @eliminated == b_rook && row_move == 7 && col_move == 7
+      @b_castling[2] = false
+    elsif @eliminated == w_rook && row_move == 0 && col_move == 0
+      @w_castling[0] = false
+    elsif @eliminated == w_rook && row_move == 0 && col_move == 7
+      @w_castling[2] = false
+    end
 
     # Eliminate en-passant piece
     @board[row_orig][col_move] = empty if coordinates[4] == "en-passant"
@@ -408,15 +407,19 @@ class Board
     if row == 7 && column == 2
       @board[row][3] = @board[row][0]
       @board[row][0] = empty
+      @b_castling[1] = false
     elsif row == 7 && column == 6
       @board[row][5] = @board[row][7]
       @board[row][7] = empty
+      @b_castling[1] = false
     elsif row == 0 && column == 2
       @board[row][3] = @board[row][0]
       @board[row][0] = empty
+      @w_castling[1] = false
     elsif row == 0 && column == 6
       @board[row][5] = @board[row][7]
       @board[row][7] = empty
+      @w_castling[1] = false
     end
   end
 
@@ -527,7 +530,7 @@ class Board
 
     if (row-1).between?(0,7) && (column+1).between?(0,7)
       for tile in 1..7 
-        break if row-tile > 7 || column+tile < 0
+        break if row-tile < 0 || column+tile > 7
         break if black_pieces.any?(@board[row-tile][column+tile])
         @color[row-tile][column+tile] = 41
         break if white_pieces.any?(@board[row-tile][column+tile])
@@ -565,12 +568,16 @@ class Board
 
     if (row-1).between?(0,7) && (column+1).between?(0,7)
       for tile in 1..7 
-        break if row-tile > 7 || column+tile < 0
+        break if row-tile < 0 || column+tile > 7
         break if white_pieces.any?(@board[row-tile][column+tile])
         @color[row-tile][column+tile] = 41
         break if black_pieces.any?(@board[row-tile][column+tile])
       end
     end
   end
+
+
+
+
 
 end # End of board class!
