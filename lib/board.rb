@@ -19,10 +19,10 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
     @dark = 44
     @light = 1
@@ -38,6 +38,12 @@ class Board
     @w_castling = [true, true, true]
 
     @eliminated = nil
+
+    @check = false
+    @king_in_check = nil
+    @check_attacker = []
+    @current = "White"
+
   end
 
   def print_board
@@ -57,6 +63,8 @@ class Board
       print "\n"
     end
     puts "    a  b  c  d  e  f  g  h\n\n"
+
+    puts "Check!\n\n" if @check == true
   end
 
   def valid_select?(row, column, current)
@@ -326,6 +334,9 @@ class Board
     row     = coordinates[0]
     column  = coordinates[1]
     @color[row][column] = 42
+
+    @current = "White" if white_pieces.any?(@board[row][column])
+    @current = "Black" if black_pieces.any?(@board[row][column])
   end
 
   def valid_area?(row, column)
@@ -368,7 +379,13 @@ class Board
     pawn_promotion(row_move, col_move) if @promotion == true
     @promotion = false
 
-    # Restore board color
+    # Assess a check
+    check_criteria(row_move, col_move, @board[row_move][col_move])
+
+    restore_board_color
+  end
+
+  def restore_board_color
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
   end
 
@@ -576,8 +593,45 @@ class Board
     end
   end
 
+  def check_criteria(row, column, piece)
+    restore_board_color
+    @check = false
 
+    case piece
+    when b_pawn
+      b_pawn_moveset(row, column)
+    when w_pawn
+      w_pawn_moveset(row, column)
+    when b_rook
+      b_rook_moveset(row, column)
+    when w_rook
+      w_rook_moveset(row, column)
+    when b_bishop
+      b_bishop_moveset(row, column)
+    when w_bishop
+      w_bishop_moveset(row, column)
+    when b_knight
+      b_knight_moveset(row, column)
+    when w_knight
+      w_knight_moveset(row, column)
+    when b_queen
+      b_rook_moveset(row, column)
+      b_bishop_moveset(row, column)
+    when w_queen
+      w_rook_moveset(row, column)
+      w_bishop_moveset(row, column)
+    end
 
+    @color.flatten.each_with_index do |item, index|
+      @check = true if @current == "Black" && @board.flatten[index] == w_king && item == 41
+      @check = true if @current == "White" && @board.flatten[index] == b_king && item == 41
+      if @check == true
+        @check_attacker = [row, column, piece]
+        @current == "White" ? @king_in_check = "Black" : @king_in_check = "White"
+        return
+      end
+    end
 
+  end
 
 end # End of board class!
