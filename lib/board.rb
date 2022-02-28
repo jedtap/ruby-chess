@@ -44,6 +44,14 @@ class Board
     @check_attacker = []
     @current = "White"
 
+    @checkmate = false
+    @stalemate = false
+    @b_king_pos = [7, 4]
+    @w_king_pos = [0, 4]
+    @current_piece = nil
+
+    @hehe = nil
+
   end
 
   def print_board
@@ -65,6 +73,8 @@ class Board
     puts "    a  b  c  d  e  f  g  h\n\n"
 
     puts "Check!\n\n" if @check == true
+    puts "king in danger? #{@hehe}"
+    
   end
 
   def valid_select?(row, column, current)
@@ -81,16 +91,8 @@ class Board
     case piece
     when b_pawn
       return false unless (row-1).between?(0,7)
-      
-      if @board[row-1][column] == empty
-        @color[row-1][column] = 41
-      end
-      if (column+1).between?(0,7)
-        @color[row-1][column+1] = 41 if white_pieces.any?(@board[row-1][column+1])
-      end
-      if (column-1).between?(0,7)
-        @color[row-1][column-1] = 41 if white_pieces.any?(@board[row-1][column-1])
-      end
+
+      b_pawn_moveset(row, column)
 
       # En-passant attack
       if @en_passant_turn > 0
@@ -123,15 +125,7 @@ class Board
     when w_pawn
       return false unless (row+1).between?(0,7)
       
-      if @board[row+1][column] == empty
-        @color[row+1][column] = 41
-      end
-      if (column+1).between?(0,7)
-        @color[row+1][column+1] = 41 if black_pieces.any?(@board[row+1][column+1])
-      end
-      if (column-1).between?(0,7)
-        @color[row+1][column-1] = 41 if black_pieces.any?(@board[row+1][column-1])
-      end
+      w_pawn_moveset(row, column)
 
       # En-passant attack
       if @en_passant_turn > 0
@@ -210,6 +204,7 @@ class Board
         end
       end
       return false unless @color.flatten.any?(41)
+      @b_castling[1] = false
     when w_king
       if (column+1).between?(0,7)
         @color[row][column+1] = 41 if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
@@ -247,72 +242,11 @@ class Board
       end
 
       return false unless @color.flatten.any?(41)
+      @w_castling[1] = false
     when b_knight
-      if (column+2).between?(0,7)
-        if (row+1).between?(0,7)
-          @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || white_pieces.any?(@board[row+1][column+2])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || white_pieces.any?(@board[row-1][column+2])
-        end
-      end
-      if (column-2).between?(0,7)
-        if (row+1).between?(0,7)
-          @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || white_pieces.any?(@board[row+1][column-2])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || white_pieces.any?(@board[row-1][column-2])
-        end
-      end
-      if (row+2).between?(0,7)
-        if (column+1).between?(0,7)
-          @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || white_pieces.any?(@board[row+2][column+1])
-        end
-        if (column-1).between?(0,7)
-          @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || white_pieces.any?(@board[row+2][column-1])
-        end
-      end
-      if (row-2).between?(0,7)
-        if (column+1).between?(0,7)
-          @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || white_pieces.any?(@board[row-2][column+1])
-        end
-        if (column-1).between?(0,7)
-          @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || white_pieces.any?(@board[row-2][column-1])
-        end
-      end      
+      b_knight_moveset(row, column)
     when w_knight
-      if (column+2).between?(0,7)
-        if (row+1).between?(0,7)
-          @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || black_pieces.any?(@board[row+1][column+2])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || black_pieces.any?(@board[row-1][column+2])
-        end
-      end
-      if (column-2).between?(0,7)
-        if (row+1).between?(0,7)
-          @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || black_pieces.any?(@board[row+1][column-2])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || black_pieces.any?(@board[row-1][column-2])
-        end
-      end
-      if (row+2).between?(0,7)
-        if (column+1).between?(0,7)
-          @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || black_pieces.any?(@board[row+2][column+1])
-        end
-        if (column-1).between?(0,7)
-          @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || black_pieces.any?(@board[row+2][column-1])
-        end
-      end
-      if (row-2).between?(0,7)
-        if (column+1).between?(0,7)
-          @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || black_pieces.any?(@board[row-2][column+1])
-        end
-        if (column-1).between?(0,7)
-          @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || black_pieces.any?(@board[row-2][column-1])
-        end
-      end
+      w_knight_moveset(row, column)
     when b_bishop
       b_bishop_moveset(row, column)
     when w_bishop
@@ -337,6 +271,7 @@ class Board
 
     @current = "White" if white_pieces.any?(@board[row][column])
     @current = "Black" if black_pieces.any?(@board[row][column])
+    @current_piece = @board[row][column]
   end
 
   def valid_area?(row, column)
@@ -357,6 +292,10 @@ class Board
     @eliminated = @board[row_move][col_move]
     @board[row_move][col_move] = @board[row_orig][col_orig]
     @board[row_orig][col_orig] = empty
+
+    # Update king's position
+    @b_king_pos = [row_move, col_move] if @current_piece == b_king
+    @w_king_pos = [row_move, col_move] if @current_piece == w_king
 
     # Deactivate castling for a rook w/ zero moves that got eliminated
     if @eliminated == b_rook && row_move == 7 && col_move == 0
@@ -381,6 +320,11 @@ class Board
 
     # Assess a check
     check_criteria(row_move, col_move, @board[row_move][col_move])
+
+    # Assess checkmate criteria
+    checkmate_criteria() if @check == true
+
+    @hehe = king_in_danger if @check == true
 
     restore_board_color
   end
@@ -593,6 +537,101 @@ class Board
     end
   end
 
+  def b_pawn_moveset(row, column)
+    if @board[row-1][column] == empty
+      @color[row-1][column] = 41
+    end
+    if (column+1).between?(0,7)
+      @color[row-1][column+1] = 41 if white_pieces.any?(@board[row-1][column+1])
+    end
+    if (column-1).between?(0,7)
+      @color[row-1][column-1] = 41 if white_pieces.any?(@board[row-1][column-1])
+    end
+  end
+
+  def w_pawn_moveset(row, column)
+    if @board[row+1][column] == empty
+      @color[row+1][column] = 41
+    end
+    if (column+1).between?(0,7)
+      @color[row+1][column+1] = 41 if black_pieces.any?(@board[row+1][column+1])
+    end
+    if (column-1).between?(0,7)
+      @color[row+1][column-1] = 41 if black_pieces.any?(@board[row+1][column-1])
+    end
+  end
+
+  def b_knight_moveset(row, column)
+    if (column+2).between?(0,7)
+      if (row+1).between?(0,7)
+        @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || white_pieces.any?(@board[row+1][column+2])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || white_pieces.any?(@board[row-1][column+2])
+      end
+    end
+    if (column-2).between?(0,7)
+      if (row+1).between?(0,7)
+        @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || white_pieces.any?(@board[row+1][column-2])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || white_pieces.any?(@board[row-1][column-2])
+      end
+    end
+    if (row+2).between?(0,7)
+      if (column+1).between?(0,7)
+        @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || white_pieces.any?(@board[row+2][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || white_pieces.any?(@board[row+2][column-1])
+      end
+    end
+    if (row-2).between?(0,7)
+      if (column+1).between?(0,7)
+        @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || white_pieces.any?(@board[row-2][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || white_pieces.any?(@board[row-2][column-1])
+      end
+    end
+  end
+
+  def w_knight_moveset(row, column)
+    if (column+2).between?(0,7)
+      if (row+1).between?(0,7)
+        @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || black_pieces.any?(@board[row+1][column+2])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || black_pieces.any?(@board[row-1][column+2])
+      end
+    end
+    if (column-2).between?(0,7)
+      if (row+1).between?(0,7)
+        @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || black_pieces.any?(@board[row+1][column-2])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || black_pieces.any?(@board[row-1][column-2])
+      end
+    end
+    if (row+2).between?(0,7)
+      if (column+1).between?(0,7)
+        @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || black_pieces.any?(@board[row+2][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || black_pieces.any?(@board[row+2][column-1])
+      end
+    end
+    if (row-2).between?(0,7)
+      if (column+1).between?(0,7)
+        @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || black_pieces.any?(@board[row-2][column+1])
+      end
+      if (column-1).between?(0,7)
+        @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || black_pieces.any?(@board[row-2][column-1])
+      end
+    end
+  end
+
+
   def check_criteria(row, column, piece)
     restore_board_color
     @check = false
@@ -633,5 +672,50 @@ class Board
     end
 
   end
+
+  def checkmate
+    @checkmate
+  end
+
+  def stalemate
+    @stalemate = false
+  end
+  
+  def checkmate_criteria
+    @checkmate = true if check_move_out == false && check_block == false && check_takedown == false
+  end
+
+  def check_move_out
+    true
+  end
+
+  def check_block
+    true
+  end
+
+  def check_takedown
+    true
+  end
+
+  def king_in_danger
+    # Check if White king is in danger
+    if @current == "Black"
+      restore_board_color
+      w_bishop_moveset(@w_king_pos[0], @w_king_pos[1])
+      w_rook_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index do | item, index |
+        return true if item == 41 && @board.flatten[index] == b_queen
+      end
+    end
+
+    # Check if Black king is in danger
+    # restore_board_color
+    # if @current == "White"
+    #   true
+    # end
+
+    # @current = "White"
+    return false 
+  end # end of king in danger check
 
 end # End of board class!

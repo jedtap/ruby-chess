@@ -19,8 +19,13 @@ class Game
       @board.color_origin(@origin)
       @board.print_board
       @board.move_piece(select_move)
+      break if @board.checkmate
+      break if @board.stalemate
+
       @current == "White" ? @current = "Black" : @current = "White"
     end
+    
+    puts "End of game..."
   end
 
   def select_piece
