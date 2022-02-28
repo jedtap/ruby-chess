@@ -257,12 +257,12 @@ class Board
     when w_queen
       w_rook_moveset(row, column)
       w_bishop_moveset(row,column)
-    end # end of case
+    end
 
     return false unless @color.flatten.any?(41)
     @en_passant_turn -= 1
     true
-  end # end of valid moves!
+  end
 
   def color_origin(coordinates)
     row     = coordinates[0]
@@ -698,24 +698,59 @@ class Board
   end
 
   def king_in_danger
-    # Check if White king is in danger
+    
+    # Assess if White king is in danger by any black piece
     if @current == "Black"
+      restore_board_color
+      w_pawn_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_pawn }
+    
+      restore_board_color
+      w_knight_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_knight }
+
+      restore_board_color
+      w_rook_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_rook }
+
+      restore_board_color
+      w_bishop_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_bishop }
+
       restore_board_color
       w_bishop_moveset(@w_king_pos[0], @w_king_pos[1])
       w_rook_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index do | item, index |
-        return true if item == 41 && @board.flatten[index] == b_queen
-      end
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_queen }
+    
+      false
     end
 
-    # Check if Black king is in danger
-    # restore_board_color
-    # if @current == "White"
-    #   true
-    # end
+    # Assess if Black king is in danger by any white piece
+    if @current == "White"
+      restore_board_color
+      b_pawn_moveset(@b_king_pos[0], @b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_pawn }
+    
+      restore_board_color
+      b_knight_moveset(@b_king_pos[0], @b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_knight }
 
-    # @current = "White"
-    return false 
-  end # end of king in danger check
+      restore_board_color
+      b_rook_moveset(@b_king_pos[0], @b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_rook }
+
+      restore_board_color
+      b_bishop_moveset(@b_king_pos[0], @b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_bishop }
+
+      restore_board_color
+      b_bishop_moveset(@b_king_pos[0], @b_king_pos[1])
+      b_rook_moveset(@w_king_pos[0], @w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_queen }
+    
+      false 
+    end
+
+  end
 
 end # End of board class!
