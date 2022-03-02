@@ -49,8 +49,13 @@ class Board
     @b_king_pos = [7, 4]
     @w_king_pos = [0, 4]
     @current_piece = nil
+    @board_simulate = @board.clone.map(&:clone)
 
-    @hehe = nil
+    @sim_b_king_pos = []
+    @sim_w_king_pos = []
+
+    @hehe = nil #!!!!!!!!!!!!!!!!!!!!!!!
+    @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
 
   end
 
@@ -73,7 +78,7 @@ class Board
     puts "    a  b  c  d  e  f  g  h\n\n"
 
     puts "Check!\n\n" if @check == true
-    puts "king in danger? #{@hehe}"
+    print "test criteria: #{@hehe}. test: #{@hoho}\n" #!!!!!!!!!!!!!!!!!!!!!!!
     
   end
 
@@ -321,10 +326,12 @@ class Board
     # Assess a check
     check_criteria(row_move, col_move, @board[row_move][col_move])
 
-    # Assess checkmate criteria
-    checkmate_criteria() if @check == true
+    # !!!!!!!!!!!!!!!!!!!!!!
 
-    @hehe = king_in_danger if @check == true
+    # Assess checkmate criteria
+    # checkmate_criteria() if @check == true
+
+    @hehe = check_move_out if @check == true
 
     restore_board_color
   end
@@ -631,7 +638,6 @@ class Board
     end
   end
 
-
   def check_criteria(row, column, piece)
     restore_board_color
     @check = false
@@ -678,7 +684,7 @@ class Board
   end
 
   def stalemate
-    @stalemate = false
+    @stalemate
   end
   
   def checkmate_criteria
@@ -686,7 +692,75 @@ class Board
   end
 
   def check_move_out
-    true
+
+    # Test if the Black King can move/attack to a square w/o being in check
+    if @current == "White"
+      row = @b_king_pos[0]
+      column = @b_king_pos[1]
+
+      if (column+1).between?(0,7)
+
+        # restore_board_color
+        # @board_simulate = @board.clone.map(&:clone)
+        # if @board_simulate[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
+        #   @board_simulate[row][column+1] = @board_simulate[row][column]
+        #   @board_simulate[row][column] = empty
+        # end
+        # return true if king_in_danger == false
+        
+        # if (row+1).between?(0,7)
+
+        #   restore_board_color
+        #   @board_simulate = @board.clone.map(&:clone)
+        #   if @board_simulate[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
+        #     @board_simulate[row+1][column+1] = @board_simulate[row][column]
+        #     @board_simulate[row][column] = empty
+        #   end
+        #   return true if king_in_danger == false
+  
+        # end
+
+
+        if (row-1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row-1][column+1] == empty || white_pieces.any?(@board[row-1][column+1])
+            @board_simulate[row-1][column+1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row-1, column+1]
+          end
+          return true if king_in_danger == false
+
+        end
+      end
+
+    end
+
+    #test
+
+
+# if (column-1).between?(0,7)
+#   @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
+#   if (row+1).between?(0,7)
+#     @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
+#   end
+#   if (row-1).between?(0,7)
+#     @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
+#   end
+# end
+# if (row+1).between?(0,7)
+#   @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
+# end
+# if (row-1).between?(0,7)
+#   @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
+# end
+
+
+    # test
+
+
+    "Boys"
   end
 
   def check_block
@@ -698,56 +772,56 @@ class Board
   end
 
   def king_in_danger
-    
+
     # Assess if White king is in danger by any black piece
     if @current == "Black"
       restore_board_color
-      w_pawn_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_pawn }
-    
-      restore_board_color
-      w_knight_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_knight }
+      w_pawn_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_pawn }
 
       restore_board_color
-      w_rook_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_rook }
+      w_knight_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_knight }
 
       restore_board_color
-      w_bishop_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_bishop }
+      w_rook_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_rook }
 
       restore_board_color
-      w_bishop_moveset(@w_king_pos[0], @w_king_pos[1])
-      w_rook_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == b_queen }
-    
+      w_bishop_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_bishop }
+
+      restore_board_color
+      w_bishop_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      w_rook_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_queen }
+
       false
     end
 
     # Assess if Black king is in danger by any white piece
     if @current == "White"
       restore_board_color
-      b_pawn_moveset(@b_king_pos[0], @b_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_pawn }
-    
-      restore_board_color
-      b_knight_moveset(@b_king_pos[0], @b_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_knight }
+      b_pawn_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_pawn }
 
       restore_board_color
-      b_rook_moveset(@b_king_pos[0], @b_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_rook }
+      b_knight_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_knight }
 
       restore_board_color
-      b_bishop_moveset(@b_king_pos[0], @b_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_bishop }
+      b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_rook }
 
       restore_board_color
-      b_bishop_moveset(@b_king_pos[0], @b_king_pos[1])
-      b_rook_moveset(@w_king_pos[0], @w_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board.flatten[index] == w_queen }
-    
+      b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_bishop }
+
+      restore_board_color
+      b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_queen }
+
       false 
     end
 
