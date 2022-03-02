@@ -700,26 +700,27 @@ class Board
 
       if (column+1).between?(0,7)
 
-        # restore_board_color
-        # @board_simulate = @board.clone.map(&:clone)
-        # if @board_simulate[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
-        #   @board_simulate[row][column+1] = @board_simulate[row][column]
-        #   @board_simulate[row][column] = empty
-        # end
-        # return true if king_in_danger == false
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
+          @board_simulate[row][column+1] = @board_simulate[row][column]
+          @board_simulate[row][column] = empty
+          @sim_b_king_pos = [row, column+1]
+        end
+        return true if king_in_danger == false
         
-        # if (row+1).between?(0,7)
+        if (row+1).between?(0,7)
 
-        #   restore_board_color
-        #   @board_simulate = @board.clone.map(&:clone)
-        #   if @board_simulate[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
-        #     @board_simulate[row+1][column+1] = @board_simulate[row][column]
-        #     @board_simulate[row][column] = empty
-        #   end
-        #   return true if king_in_danger == false
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
+            @board_simulate[row+1][column+1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row+1, column+1]
+          end
+          return true if king_in_danger == false
   
-        # end
-
+        end
 
         if (row-1).between?(0,7)
 
@@ -733,34 +734,188 @@ class Board
           return true if king_in_danger == false
 
         end
+
+      end
+
+      if (column-1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
+          @board_simulate[row][column-1] = @board_simulate[row][column]
+          @board_simulate[row][column] = empty
+          @sim_b_king_pos = [row, column-1]
+        end
+        return true if king_in_danger == false
+        
+        if (row+1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
+            @board_simulate[row+1][column-1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row+1, column-1]
+          end
+          return true if king_in_danger == false
+  
+        end
+
+        if (row-1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
+            @board_simulate[row-1][column-1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row-1, column-1]
+          end
+          return true if king_in_danger == false
+
+        end
+
+      end
+
+      if (row+1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
+          @board_simulate[row+1][column] = @board_simulate[row+1][column]
+          @board_simulate[row+1][column] = empty
+          @sim_b_king_pos = [row+1, column]
+        end
+        return true if king_in_danger == false
+        
+      end
+
+      if (row-1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
+          @board_simulate[row-1][column] = @board_simulate[row-1][column]
+          @board_simulate[row-1][column] = empty
+          @sim_b_king_pos = [row-1, column]
+        end
+        return true if king_in_danger == false
+
+      end
+
+    end 
+
+    # Test if the White King can move/attack to a square w/o being in check
+    if @current == "Black"
+      row = @w_king_pos[0]
+      column = @w_king_pos[1]
+
+      if (column+1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
+          @board_simulate[row][column+1] = @board_simulate[row][column]
+          @board_simulate[row][column] = empty
+          @sim_b_king_pos = [row, column+1]
+        end
+        return true if king_in_danger == false
+        
+        if (row+1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
+            @board_simulate[row+1][column+1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row+1, column+1]
+          end
+          return true if king_in_danger == false
+
+        end
+
+        if (row-1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
+            @board_simulate[row-1][column+1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row-1, column+1]
+          end
+          return true if king_in_danger == false
+
+        end
+
+      end
+
+      if (column-1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
+          @board_simulate[row][column-1] = @board_simulate[row][column]
+          @board_simulate[row][column] = empty
+          @sim_b_king_pos = [row, column-1]
+        end
+        return true if king_in_danger == false
+        
+        if (row+1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
+            @board_simulate[row+1][column-1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row+1, column-1]
+          end
+          return true if king_in_danger == false
+
+        end
+
+        if (row-1).between?(0,7)
+
+          restore_board_color
+          @board_simulate = @board.clone.map(&:clone)
+          if @board_simulate[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
+            @board_simulate[row-1][column-1] = @board_simulate[row][column]
+            @board_simulate[row][column] = empty
+            @sim_b_king_pos = [row-1, column-1]
+          end
+          return true if king_in_danger == false
+
+        end
+
+      end
+
+      if (row+1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
+          @board_simulate[row+1][column] = @board_simulate[row+1][column]
+          @board_simulate[row+1][column] = empty
+          @sim_b_king_pos = [row+1, column]
+        end
+        return true if king_in_danger == false
+        
+      end
+
+      if (row-1).between?(0,7)
+
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if @board_simulate[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
+          @board_simulate[row-1][column] = @board_simulate[row-1][column]
+          @board_simulate[row-1][column] = empty
+          @sim_b_king_pos = [row-1, column]
+        end
+        return true if king_in_danger == false
+
       end
 
     end
 
-    #test
-
-
-# if (column-1).between?(0,7)
-#   @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
-#   if (row+1).between?(0,7)
-#     @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
-#   end
-#   if (row-1).between?(0,7)
-#     @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
-#   end
-# end
-# if (row+1).between?(0,7)
-#   @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
-# end
-# if (row-1).between?(0,7)
-#   @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
-# end
-
-
-    # test
-
-
-    "Boys"
+    false
   end
 
   def check_block
@@ -796,7 +951,6 @@ class Board
       w_rook_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
       @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_queen }
 
-      false
     end
 
     # Assess if Black king is in danger by any white piece
@@ -822,9 +976,9 @@ class Board
       b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
       @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_queen }
 
-      false 
     end
 
+    false
   end
 
 end # End of board class!
