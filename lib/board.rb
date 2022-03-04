@@ -19,11 +19,15 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
+    @board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
+    @board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+    
+
     @dark = 44
     @light = 1
     @color = [[@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark], [@dark,@light,@dark,@light,@dark,@light,@dark,@light], [@light,@dark,@light,@dark,@light,@dark,@light,@dark]]
@@ -54,7 +58,8 @@ class Board
     @sim_b_king_pos = []
     @sim_w_king_pos = []
 
-    @hehe = nil #!!!!!!!!!!!!!!!!!!!!!!!
+
+    @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
 
   end
@@ -545,6 +550,8 @@ class Board
   end
 
   def b_pawn_moveset(row, column)
+    return unless (row-1).between?(0,7)
+
     if @board[row-1][column] == empty
       @color[row-1][column] = 41
     end
@@ -557,6 +564,8 @@ class Board
   end
 
   def w_pawn_moveset(row, column)
+    return unless (row+1).between?(0,7)
+
     if @board[row+1][column] == empty
       @color[row+1][column] = 41
     end
@@ -747,7 +756,7 @@ class Board
           @sim_b_king_pos = [row, column-1]
         end
         return true if king_in_danger == false
-        
+
         if (row+1).between?(0,7)
 
           restore_board_color
