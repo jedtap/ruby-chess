@@ -1,0 +1,167 @@
+[33mcommit 64b6f2d54b75b8ba9a780b5431793b8c09692cc5[m[33m ([m[1;36mHEAD[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 16:35:09 2022 +0800
+
+    revert to basic movements
+
+[33mcommit 6946649829f56c010909c386101e5ca88db81aab[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 14:57:47 2022 +0800
+
+    fix sim_w in check_move_out module
+
+[33mcommit cd6dc7898cda55941b452eb6e476ca7c6335fa0c[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 14:47:44 2022 +0800
+
+    check block for black ally is good
+
+[33mcommit 418e34ae0e805e9109a87545e8e3f19f7c1dea3d[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 13:47:44 2022 +0800
+
+    b knight can block a check
+
+[33mcommit 1798d36e7b352d8e8733d2307dd1d5222a096e73[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 13:23:45 2022 +0800
+
+    savepoint: make check block work
+
+[33mcommit 19ecad8d1df9e60ed058b4f8494a681473abad71[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 12:12:18 2022 +0800
+
+    pre add simulation changes
+
+[33mcommit 36b483ec51e3b44e866f1bb78476fef0d72d2d18[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Mar 5 10:17:09 2022 +0800
+
+    add capability of saving tiles between attacker and king
+
+[33mcommit e28cf754944c84d51b9c8145c4e43da3cfb2cd8c[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Fri Mar 4 21:09:17 2022 +0800
+
+    add b and w pawn moveset return criteria and tested completely move out criteria
+
+[33mcommit b17fe76e08197d9b793ed8467964fabd1ada804d[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Wed Mar 2 21:51:39 2022 +0800
+
+    add content in check out criteria, needs testing
+
+[33mcommit d24c26e0c2baaf71e410897ceb3559a13ae4abcc[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Wed Mar 2 21:29:57 2022 +0800
+
+    add simulate parameters and rules
+
+[33mcommit 4807eb9e3c8c9bc5664ff407992196661ac0717c[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Mon Feb 28 21:03:50 2022 +0800
+
+    complete king in danger assessment
+
+[33mcommit eec60e2a76621036ef6b6da55cb8b4726c43a076[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Mon Feb 28 20:42:53 2022 +0800
+
+    added check to king castling, refactor pawn and knight movesets, queen can partially checkmate white king
+
+[33mcommit 06f36d9c10cfb59fdbd109faa237737a90adf3e5[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sun Feb 27 20:20:06 2022 +0800
+
+    add check criteria and variables
+
+[33mcommit a2ab1059f00192b4d9320cbd3f16629e32236ed6[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sun Feb 27 16:27:23 2022 +0800
+
+    add more checks for castling and fix bishop movement
+
+[33mcommit b76bdd9a16d8daa1f384e853ffc1c49a30b44817[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Feb 26 13:27:48 2022 +0800
+
+    complete all pieces movement
+
+[33mcommit 08be6ae8cc98755dca0906448f8f74ad9cebf138[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Fri Feb 25 16:47:05 2022 +0800
+
+    add king movement
+
+[33mcommit 5223a75b094dd619d3adc458fb4ebfa1d83a8aaa[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Fri Feb 25 16:25:56 2022 +0800
+
+    add rook movements
+
+[33mcommit b969e4f776b2baebdf553bb337ea09af32daa462[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Fri Feb 25 15:41:10 2022 +0800
+
+    add pawn promotion rule
+
+[33mcommit 4e682ae4e73a59a7c6bccc999718fc19265a3770[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Fri Feb 25 15:22:56 2022 +0800
+
+    add en-passant rules
+
+[33mcommit 431d43fe84c8d5dc2876be6c1a579883c3a51d87[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Tue Feb 22 20:17:38 2022 +0800
+
+    revise pawn basic rules
+
+[33mcommit 7418af5320d0869948c1dfbcc70f23ee4365338f[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sun Feb 20 19:34:57 2022 +0800
+
+    black pawn movements
+
+[33mcommit 1cb24ffa5539771f0295449de24062215ddd58af[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sun Feb 20 17:21:10 2022 +0800
+
+    add white pawn movement before switch
+
+[33mcommit d357a6d1adc749f0860dc0aa00ce148936416bf9[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Feb 19 21:04:41 2022 +0800
+
+    reversed print order and highlight any coordinate to green
+
+[33mcommit 228cc40486726e27204a443c6d82eae73d111dac[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Feb 19 19:32:22 2022 +0800
+
+    edit symbols and add print board
+
+[33mcommit cdbe1b13a966c9b80a310a469f8c7ab97654c88b[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Feb 19 18:27:19 2022 +0800
+
+    add introduction
+
+[33mcommit c4f6b690f8c10da316f7ad069c9c11d21e0019ba[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sat Feb 19 18:17:13 2022 +0800
+
+    added chess pieces
+
+[33mcommit 233dc7d31db43213ed4908ab7046407ccb1c9ebf[m
+Author: Jed-Tapiador <doom.slaver2@gmail.com>
+Date:   Sun Feb 13 19:59:06 2022 +0800
+
+    initial setup
+
+[33mcommit 9e0cb322b533807d5825e39a56df69069a4940b2[m
+Author: jeditap <92869542+jedtap@users.noreply.github.com>
+Date:   Sun Feb 13 19:44:10 2022 +0800
+
+    Initial commit
