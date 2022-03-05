@@ -26,7 +26,7 @@ class Board
     
     @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
 
 
@@ -1209,6 +1209,30 @@ class Board
         end
       end
 
+      # Takedown from a rook?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      b_rook_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == w_rook
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = w_rook
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
+      # Takedown from a bishop?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      b_bishop_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == w_bishop
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = w_bishop
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
     end # End of Black attacker
 
     # Can enemy white piece be taken down?
@@ -1221,6 +1245,30 @@ class Board
       @color.flatten.each_with_index do | item, index | 
         if item == 41 && @board_simulate.flatten[index] == b_pawn
           @board_simulate[@check_attacker[0]][@check_attacker[1]] = b_pawn
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
+      # Takedown from a rook?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      w_rook_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == b_rook
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = b_rook
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
+      # Takedown from a rook?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      w_bishop_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == b_bishop
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = b_bishop
           @board_simulate[index/8][index%8] = empty
           return true if king_in_danger == false
         end
