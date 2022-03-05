@@ -825,7 +825,7 @@ class Board
         if @board_simulate[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
           @board_simulate[row][column+1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
-          @sim_b_king_pos = [row, column+1]
+          @sim_w_king_pos = [row, column+1]
         end
         return true if king_in_danger == false
         
@@ -836,7 +836,7 @@ class Board
           if @board_simulate[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
             @board_simulate[row+1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row+1, column+1]
+            @sim_w_king_pos = [row+1, column+1]
           end
           return true if king_in_danger == false
 
@@ -849,7 +849,7 @@ class Board
           if @board_simulate[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
             @board_simulate[row-1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row-1, column+1]
+            @sim_w_king_pos = [row-1, column+1]
           end
           return true if king_in_danger == false
 
@@ -864,7 +864,7 @@ class Board
         if @board_simulate[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
           @board_simulate[row][column-1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
-          @sim_b_king_pos = [row, column-1]
+          @sim_w_king_pos = [row, column-1]
         end
         return true if king_in_danger == false
         
@@ -875,7 +875,7 @@ class Board
           if @board_simulate[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
             @board_simulate[row+1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row+1, column-1]
+            @sim_w_king_pos = [row+1, column-1]
           end
           return true if king_in_danger == false
 
@@ -888,7 +888,7 @@ class Board
           if @board_simulate[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
             @board_simulate[row-1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row-1, column-1]
+            @sim_w_king_pos = [row-1, column-1]
           end
           return true if king_in_danger == false
 
@@ -903,7 +903,7 @@ class Board
         if @board_simulate[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
           @board_simulate[row+1][column] = @board_simulate[row+1][column]
           @board_simulate[row+1][column] = empty
-          @sim_b_king_pos = [row+1, column]
+          @sim_w_king_pos = [row+1, column]
         end
         return true if king_in_danger == false
         
@@ -916,7 +916,7 @@ class Board
         if @board_simulate[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
           @board_simulate[row-1][column] = @board_simulate[row-1][column]
           @board_simulate[row-1][column] = empty
-          @sim_b_king_pos = [row-1, column]
+          @sim_w_king_pos = [row-1, column]
         end
         return true if king_in_danger == false
 
