@@ -25,7 +25,12 @@ class Game
       @current == "White" ? @current = "Black" : @current = "White"
     end
     
-    puts "End of game..."
+    puts "\nEnd of game..."
+    if @board.checkmate
+      puts "#{@current} checkmate opponent for the victory! Well done!"
+    elsif @board.stalemate
+      puts "It's a draw! Great match."
+    end
   end
 
   def select_piece

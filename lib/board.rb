@@ -24,11 +24,10 @@ class Board
     # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
-    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    @board[0] = ["#{w_rook}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-
+    @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}"]
 
     @dark = 44
     @light = 1
@@ -64,7 +63,13 @@ class Board
 
     @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
-    # castling can lead into check! Revise this!!!
+
+    # Additional changes:
+    # in valid_area? any move to any piece should not let you be open for a check 
+    # castling and en-passant can lead into a check
+    # rules for stalemate
+    # save to YAML
+    # rubocop
 
   end
 
@@ -87,8 +92,8 @@ class Board
     puts "    a  b  c  d  e  f  g  h\n\n"
 
     puts "Check!\n\n" if @check == true
-    print "test criteria: #{@hehe}. test: #{@hoho}\n" #!!!!!!!!!!!!!!!!!!!!!!!
-    
+    print "test criteria: #{@checkmate}. test: #{@hoho}\n" #!!!!!!!!!!!!!!!!!!!!!!!
+
   end
 
   def valid_select?(row, column, current)
@@ -289,9 +294,9 @@ class Board
   end
 
   def valid_area?(row, column)
-    return true if @color[row][column] == 41
-    return "en-passant" if @color[row][column] == 45
-    return "castling" if @color[row][column] == 43
+    return true if @color[row][column] == 41 # add more rules
+    return "en-passant" if @color[row][column] == 45 # add more rules
+    return "castling" if @color[row][column] == 43 # add more rules
     false
   end
 
@@ -335,17 +340,11 @@ class Board
     # Assess a check
     check_criteria(row_move, col_move, @board[row_move][col_move])
 
-    # !!!!!!!!!!!!!!!!!!!!!!
-
     # Assess checkmate criteria
-    # checkmate_criteria() if @check == true
-
     if @check == true
       @simulation = true
-      @hehe = check_takedown
+      checkmate_criteria if @check == true
       @simulation = false
-    else
-      @hehe = "reset"
     end
 
     restore_board_color
@@ -674,7 +673,7 @@ class Board
         @color[row-2][column+1] = 41 if board[row-2][column+1] == empty || black_pieces.any?(board[row-2][column+1])
       end
       if (column-1).between?(0,7)
-        @color[row-2][column-1] = 41 if board[row-2][column-1] == empty || black_pieces.any?(@oard[row-2][column-1])
+        @color[row-2][column-1] = 41 if board[row-2][column-1] == empty || black_pieces.any?(board[row-2][column-1])
       end
     end
   end
@@ -747,8 +746,9 @@ class Board
           @board_simulate[row][column+1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
           @sim_b_king_pos = [row, column+1]
+          return true if king_in_danger == false
         end
-        return true if king_in_danger == false
+
         
         if (row+1).between?(0,7)
 
@@ -758,9 +758,9 @@ class Board
             @board_simulate[row+1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
             @sim_b_king_pos = [row+1, column+1]
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
-  
+
         end
 
         if (row-1).between?(0,7)
@@ -771,8 +771,8 @@ class Board
             @board_simulate[row-1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
             @sim_b_king_pos = [row-1, column+1]
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
 
         end
 
@@ -786,8 +786,9 @@ class Board
           @board_simulate[row][column-1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
           @sim_b_king_pos = [row, column-1]
+          return true if king_in_danger == false
         end
-        return true if king_in_danger == false
+
 
         if (row+1).between?(0,7)
 
@@ -797,9 +798,9 @@ class Board
             @board_simulate[row+1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
             @sim_b_king_pos = [row+1, column-1]
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
-  
+
         end
 
         if (row-1).between?(0,7)
@@ -810,8 +811,8 @@ class Board
             @board_simulate[row-1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
             @sim_b_king_pos = [row-1, column-1]
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
 
         end
 
@@ -825,9 +826,9 @@ class Board
           @board_simulate[row+1][column] = @board_simulate[row+1][column]
           @board_simulate[row+1][column] = empty
           @sim_b_king_pos = [row+1, column]
+          return true if king_in_danger == false
         end
-        return true if king_in_danger == false
-        
+
       end
 
       if (row-1).between?(0,7)
@@ -838,8 +839,8 @@ class Board
           @board_simulate[row-1][column] = @board_simulate[row-1][column]
           @board_simulate[row-1][column] = empty
           @sim_b_king_pos = [row-1, column]
+          return true if king_in_danger == false
         end
-        return true if king_in_danger == false
 
       end
 
