@@ -858,7 +858,7 @@ class Board
         if @board_simulate[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
           @board_simulate[row][column+1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
-          @sim_b_king_pos = [row, column+1]
+          @sim_w_king_pos = [row, column+1]
         end
         return true if king_in_danger == false
         
@@ -869,7 +869,7 @@ class Board
           if @board_simulate[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
             @board_simulate[row+1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row+1, column+1]
+            @sim_w_king_pos = [row+1, column+1]
           end
           return true if king_in_danger == false
 
@@ -882,7 +882,7 @@ class Board
           if @board_simulate[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
             @board_simulate[row-1][column+1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row-1, column+1]
+            @sim_w_king_pos = [row-1, column+1]
           end
           return true if king_in_danger == false
 
@@ -897,7 +897,7 @@ class Board
         if @board_simulate[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
           @board_simulate[row][column-1] = @board_simulate[row][column]
           @board_simulate[row][column] = empty
-          @sim_b_king_pos = [row, column-1]
+          @sim_w_king_pos = [row, column-1]
         end
         return true if king_in_danger == false
         
@@ -908,7 +908,7 @@ class Board
           if @board_simulate[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
             @board_simulate[row+1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row+1, column-1]
+            @sim_w_king_pos = [row+1, column-1]
           end
           return true if king_in_danger == false
 
@@ -921,7 +921,7 @@ class Board
           if @board_simulate[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
             @board_simulate[row-1][column-1] = @board_simulate[row][column]
             @board_simulate[row][column] = empty
-            @sim_b_king_pos = [row-1, column-1]
+            @sim_w_king_pos = [row-1, column-1]
           end
           return true if king_in_danger == false
 
@@ -936,7 +936,7 @@ class Board
         if @board_simulate[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
           @board_simulate[row+1][column] = @board_simulate[row+1][column]
           @board_simulate[row+1][column] = empty
-          @sim_b_king_pos = [row+1, column]
+          @sim_w_king_pos = [row+1, column]
         end
         return true if king_in_danger == false
         
@@ -949,7 +949,7 @@ class Board
         if @board_simulate[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
           @board_simulate[row-1][column] = @board_simulate[row-1][column]
           @board_simulate[row-1][column] = empty
-          @sim_b_king_pos = [row-1, column]
+          @sim_w_king_pos = [row-1, column]
         end
         return true if king_in_danger == false
 
@@ -1108,15 +1108,15 @@ class Board
       tiles.each do |coor|
 
         # Can a pawn block?
-        # restore_board_color
-        # @board_simulate = @board.clone.map(&:clone)
-        # if (coor[0] - 1).between?(0,7)
-        #   if @board_simulate[coor[0] - 1][coor[1]] == w_pawn
-        #     @board_simulate[coor[0]][coor[1]] = w_pawn
-        #     @board_simulate[coor[0] - 1][coor[1]] = empty
-        #   end
-        #   return true if king_in_danger == false
-        # end
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if (coor[0] - 1).between?(0,7)
+          if @board_simulate[coor[0] - 1][coor[1]] == w_pawn
+            @board_simulate[coor[0]][coor[1]] = w_pawn
+            @board_simulate[coor[0] - 1][coor[1]] = empty
+          end
+          return true if king_in_danger == false
+        end
 
         # Can a pawn block via double jump?
       #   restore_board_color
