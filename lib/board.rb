@@ -25,7 +25,7 @@ class Board
     # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
     @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
 
@@ -1053,6 +1053,55 @@ class Board
           end
         end
 
+        # Can a rook block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        w_rook_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == b_rook
+            @board_simulate[row][col] = b_rook
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can a bishop block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        w_bishop_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == b_bishop
+            @board_simulate[row][col] = b_bishop
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can a knight block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        w_knight_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == b_knight
+            @board_simulate[row][col] = b_knight
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can the queen block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        w_rook_moveset(row, col)
+        w_bishop_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == b_queen
+            @board_simulate[row][col] = b_queen
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
       end # End of for-loop
     end # End white
 
@@ -1061,7 +1110,7 @@ class Board
       for i in 0..units
         row = tiles[i][0]
         col = tiles[i][1]
-        
+
         # Can a pawn block?
         restore_board_color
         @board_simulate = @board.clone.map(&:clone)
@@ -1084,11 +1133,60 @@ class Board
           end
         end
 
+        # Can a rook block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        b_rook_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == w_rook
+            @board_simulate[row][col] = w_rook
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+
+        # Can a bishop block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        b_bishop_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == w_bishop
+            @board_simulate[row][col] = w_bishop
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can a knight block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        b_knight_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == w_knight
+            @board_simulate[row][col] = w_knight
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can the queen block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        b_rook_moveset(row, col)
+        b_bishop_moveset(row, col)
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == w_queen
+            @board_simulate[row][col] = w_queen
+            @board_simulate[index/8][index%8] = empty
+            return true if king_in_danger == false
+          end
+        end
+
       end # End of for-loop
 
 
     end # end black 
-
 
     return false
   end
