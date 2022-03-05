@@ -19,14 +19,16 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
+    # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    
     @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-    
-    #@board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
-    #@board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
-    
+
 
     @dark = 44
     @light = 1
@@ -341,6 +343,8 @@ class Board
       @simulation = true
       @hehe = check_block
       @simulation = false
+    else
+      @hehe = "reset"
     end
 
     restore_board_color
@@ -1034,8 +1038,8 @@ class Board
           if @board_simulate[row + 1][col] == b_pawn
             @board_simulate[row][col] = b_pawn
             @board_simulate[row + 1][col] = empty
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
         end
 
         # Can a pawn block via double jump?
@@ -1045,19 +1049,48 @@ class Board
           if @board_simulate[row + 2][col] == b_pawn && @board_simulate[row + 1][col] == empty
             @board_simulate[row][col] = b_pawn
             @board_simulate[row + 2][col] = empty
+            return true if king_in_danger == false
           end
-          return true if king_in_danger == false
         end
 
       end # End of for-loop
-    end
+    end # End white
 
     # For each square, find a white ally to block
     if @current == "Black"
-    end
+      for i in 0..units
+        row = tiles[i][0]
+        col = tiles[i][1]
+        
+        # Can a pawn block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if (row - 1).between?(0,7)
+          if @board_simulate[row - 1][col] == w_pawn
+            @board_simulate[row][col] = w_pawn
+            @board_simulate[row - 1][col] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+        # Can a pawn block via double jump?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if (row - 2).between?(0,7) && (row - 1).between?(0,7) && row - 2 == 1
+          if @board_simulate[row - 2][col] == w_pawn && @board_simulate[row - 1][col] == empty
+            @board_simulate[row][col] = w_pawn
+            @board_simulate[row - 2][col] = empty
+            return true if king_in_danger == false
+          end
+        end
+
+      end # End of for-loop
 
 
-    false
+    end # end black 
+
+
+    return false
   end
 
   def check_takedown
