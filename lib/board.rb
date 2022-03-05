@@ -27,8 +27,8 @@ class Board
     #@board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
     #@board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
 
-    @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[6] = ["#{empty}","#{empty}","#{empty}","#{b_pawn}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+    @board[7] = ["#{empty}","#{empty}","#{b_knight}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[6] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}"]
     @board[5] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
     @board[4] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
     @board[3] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
@@ -66,6 +66,8 @@ class Board
 
     @sim_b_king_pos = []
     @sim_w_king_pos = []
+
+    @simulation = false
 
     @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
@@ -348,6 +350,7 @@ class Board
 
     @hehe = check_block if @check == true
 
+    @simulation = false
     restore_board_color
   end
 
@@ -407,39 +410,42 @@ class Board
   end
 
   def b_rook_moveset(row, column)
+    board = ""
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
+
     if (column+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7
-        break if black_pieces.any?(@board[row][column+tile])
+        break if black_pieces.any?(board[row][column+tile])
         @color[row][column+tile] = 41
-        break if white_pieces.any?(@board[row][column+tile])
+        break if white_pieces.any?(board[row][column+tile])
       end
     end
 
     if (row+1).between?(0,7)
       for tile in 1..7 
         break if row+tile > 7
-        break if black_pieces.any?(@board[row+tile][column])
+        break if black_pieces.any?(board[row+tile][column])
         @color[row+tile][column] = 41
-        break if white_pieces.any?(@board[row+tile][column])
+        break if white_pieces.any?(board[row+tile][column])
       end
     end
 
     if (column-1).between?(0,7)
       for tile in 1..7 
         break if column-tile < 0
-        break if black_pieces.any?(@board[row][column-tile])
+        break if black_pieces.any?(board[row][column-tile])
         @color[row][column-tile] = 41
-        break if white_pieces.any?(@board[row][column-tile])
+        break if white_pieces.any?(board[row][column-tile])
       end
     end
 
     if (row-1).between?(0,7)
       for tile in 1..7 
         break if row-tile < 0
-        break if black_pieces.any?(@board[row-tile][column])
+        break if black_pieces.any?(board[row-tile][column])
         @color[row-tile][column] = 41
-        break if white_pieces.any?(@board[row-tile][column])
+        break if white_pieces.any?(board[row-tile][column])
       end
     end
 
@@ -588,36 +594,39 @@ class Board
   end
 
   def b_knight_moveset(row, column)
+    board = ""
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
+
     if (column+2).between?(0,7)
       if (row+1).between?(0,7)
-        @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || white_pieces.any?(@board[row+1][column+2])
+        @color[row+1][column+2] = 41 if board[row+1][column+2] == empty || white_pieces.any?(board[row+1][column+2])
       end
       if (row-1).between?(0,7)
-        @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || white_pieces.any?(@board[row-1][column+2])
+        @color[row-1][column+2] = 41 if board[row-1][column+2] == empty || white_pieces.any?(board[row-1][column+2])
       end
     end
     if (column-2).between?(0,7)
       if (row+1).between?(0,7)
-        @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || white_pieces.any?(@board[row+1][column-2])
+        @color[row+1][column-2] = 41 if board[row+1][column-2] == empty || white_pieces.any?(board[row+1][column-2])
       end
       if (row-1).between?(0,7)
-        @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || white_pieces.any?(@board[row-1][column-2])
+        @color[row-1][column-2] = 41 if board[row-1][column-2] == empty || white_pieces.any?(board[row-1][column-2])
       end
     end
     if (row+2).between?(0,7)
       if (column+1).between?(0,7)
-        @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || white_pieces.any?(@board[row+2][column+1])
+        @color[row+2][column+1] = 41 if board[row+2][column+1] == empty || white_pieces.any?(board[row+2][column+1])
       end
       if (column-1).between?(0,7)
-        @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || white_pieces.any?(@board[row+2][column-1])
+        @color[row+2][column-1] = 41 if board[row+2][column-1] == empty || white_pieces.any?(board[row+2][column-1])
       end
     end
     if (row-2).between?(0,7)
       if (column+1).between?(0,7)
-        @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || white_pieces.any?(@board[row-2][column+1])
+        @color[row-2][column+1] = 41 if board[row-2][column+1] == empty || white_pieces.any?(board[row-2][column+1])
       end
       if (column-1).between?(0,7)
-        @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || white_pieces.any?(@board[row-2][column-1])
+        @color[row-2][column-1] = 41 if board[row-2][column-1] == empty || white_pieces.any?(board[row-2][column-1])
       end
     end
   end
@@ -999,35 +1008,37 @@ class Board
       end
     end
 
+    @simulation = true
+
     # For each square, find a black ally to block
     if @current == "White"
 
       tiles.each do |coor|
 
-        # Can a pawn block?
-        restore_board_color
-        @board_simulate = @board.clone.map(&:clone)
-        if (coor[0] + 1).between?(0,7)
-          if @board_simulate[coor[0] + 1][coor[1]] == b_pawn
-            @board_simulate[coor[0]][coor[1]] = b_pawn
-            @board_simulate[coor[0] + 1][coor[1]] = empty
-          end
-          return true if king_in_danger == false
-        end
+        # # Can a pawn block?
+        # restore_board_color
+        # @board_simulate = @board.clone.map(&:clone)
+        # if (coor[0] + 1).between?(0,7)
+        #   if @board_simulate[coor[0] + 1][coor[1]] == b_pawn
+        #     @board_simulate[coor[0]][coor[1]] = b_pawn
+        #     @board_simulate[coor[0] + 1][coor[1]] = empty
+        #   end
+        #   return true if king_in_danger == false
+        # end
 
         # Can a pawn block from double jump?
 
         # Can a knight block?
-        # restore_board_color
-        # @board_simulate = @board.clone.map(&:clone)
-        # w_knight_moveset(coor[0], coor[1])
-        # @color.flatten.each_with_index do |item, index|
-        #   if item == 41 && @board_simulate.flatten[index] == b_knight
-        #     @board_simulate[coor[0]][coor[1]] = w_knight
-        #     @board_simulate[index / 8][index % 8] = empty
-        #   end
-        #   return true if king_in_danger == false
-        # end
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        w_knight_moveset(coor[0], coor[1])
+        @color.flatten.each_with_index do |item, index|
+          if item == 41 && @board_simulate.flatten[index] == b_knight
+            @board_simulate[ coor[0] ][ coor[1] ] = w_knight
+            @board_simulate[index / 8][index % 8] = empty
+          end
+          return true if king_in_danger == false
+        end
 
       end # end of tiles checking!
     end # end of white tile checking
@@ -1087,9 +1098,7 @@ class Board
       restore_board_color
       b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
       b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
-      @color.flatten.each_with_index do | item, index |       
-        return true if item == 41 && @board_simulate.flatten[index] == w_queen 
-      end
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_queen }
     end
 
     false
