@@ -66,7 +66,6 @@ class Board
 
     @sim_b_king_pos = []
     @sim_w_king_pos = []
-    @simulation = false
 
     @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
@@ -349,7 +348,6 @@ class Board
 
     @hehe = check_block if @check == true
 
-    @simulation = false
     restore_board_color
   end
 
@@ -409,9 +407,6 @@ class Board
   end
 
   def b_rook_moveset(row, column)
-    board = []
-    @simulation == true ? board = @board[][]
-
     if (column+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7
@@ -944,7 +939,6 @@ class Board
 
   def check_block
     return false if non_blockable_pieces.any?(@check_attacker[2])
-    @simulation = true
 
     vert = "n"
     hori = "n"
@@ -1017,20 +1011,8 @@ class Board
           if @board_simulate[coor[0] + 1][coor[1]] == b_pawn
             @board_simulate[coor[0]][coor[1]] = b_pawn
             @board_simulate[coor[0] + 1][coor[1]] = empty
-            @hoho << 99999
           end
-
-          @hoho << 1
-          @hoho << @board_simulate[6][3]
-          @hoho << @board_simulate[5][3]
-          @hoho << @board_simulate[5][4]
-
           return true if king_in_danger == false
-
-          @hoho << 2
-          @hoho << @board_simulate[6][3]
-          @hoho << @board_simulate[5][3]
-          @hoho << @board_simulate[5][4]
         end
 
         # Can a pawn block from double jump?
@@ -1105,19 +1087,9 @@ class Board
       restore_board_color
       b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
       b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
-      @color.flatten.each_with_index do | item, index | 
-        @hoho << "c:"
-        @hoho << @color[5][2]
-        @hoho << @color[5][3]
-        
+      @color.flatten.each_with_index do | item, index |       
         return true if item == 41 && @board_simulate.flatten[index] == w_queen 
       end
-
-      @hoho << 44
-      @hoho << @board_simulate[6][3]
-      @hoho << @board_simulate[5][3]
-      @hoho << @board_simulate[5][4]
-
     end
 
     false
