@@ -19,29 +19,10 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-<<<<<<< HEAD
     # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-=======
-    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-    
-    #@board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
-    #@board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
-
-    # @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    # @board[6] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_rook}","#{empty}","#{empty}","#{empty}"]
-    # @board[5] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}"]
-    # @board[4] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    # @board[3] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    # @board[2] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    # @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    # @board[0] = ["#{w_rook}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     
     @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
@@ -362,7 +343,6 @@ class Board
     # Assess checkmate criteria
     # checkmate_criteria() if @check == true
 
-<<<<<<< HEAD
     if @check == true
       @simulation = true
       @hehe = check_block
@@ -370,9 +350,6 @@ class Board
     else
       @hehe = "reset"
     end
-=======
-    #@hehe = check_block if @check == true
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
 
     @simulation = false
     restore_board_color
@@ -434,11 +411,7 @@ class Board
   end
 
   def b_rook_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
-
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7)
@@ -480,11 +453,7 @@ class Board
   end
   
   def w_rook_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
-
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7)
@@ -525,11 +494,7 @@ class Board
   end
 
   def b_bishop_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
-
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7) && (row+1).between?(0,7)
@@ -570,11 +535,7 @@ class Board
   end
 
   def w_bishop_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
-
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7) && (row+1).between?(0,7)
@@ -647,10 +608,7 @@ class Board
   end
 
   def b_knight_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+2).between?(0,7)
@@ -688,11 +646,7 @@ class Board
   end
 
   def w_knight_moveset(row, column)
-<<<<<<< HEAD
     board = []
-=======
-
->>>>>>> 820f51d5443393b36103a313448c73bea6f7d39c
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+2).between?(0,7)
@@ -1159,7 +1113,7 @@ class Board
 
       end # end of loop
 
-    end # End of black ally to block
+    end # End of black ally to block test
 
 <<<<<<< HEAD
 =======
