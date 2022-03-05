@@ -350,8 +350,8 @@ class Board
     # Assess checkmate criteria
     # checkmate_criteria() if @check == true
 
+    #@hehe = check_block if @check == true
 
-    
     @simulation = false
     restore_board_color
   end
