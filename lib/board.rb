@@ -26,7 +26,7 @@ class Board
     
     @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
 
 
@@ -64,6 +64,7 @@ class Board
 
     @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
+    # castling can lead into check! Revise this!!!
 
   end
 
@@ -341,7 +342,7 @@ class Board
 
     if @check == true
       @simulation = true
-      @hehe = check_block
+      @hehe = check_takedown
       @simulation = false
     else
       @hehe = "reset"
@@ -1192,7 +1193,42 @@ class Board
   end
 
   def check_takedown
-    true
+
+    # Can enemy black piece be taken down?
+    if black_pieces.any?(@check_attacker[2])
+
+      # Takedown from a pawn?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      b_pawn_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == w_pawn
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = w_pawn
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
+    end # End of Black attacker
+
+    # Can enemy white piece be taken down?
+    if white_pieces.any?(@check_attacker[2])
+
+      # Takedown from a pawn?
+      restore_board_color
+      @board_simulate = @board.clone.map(&:clone)
+      w_pawn_moveset(@check_attacker[0], @check_attacker[1])
+      @color.flatten.each_with_index do | item, index | 
+        if item == 41 && @board_simulate.flatten[index] == b_pawn
+          @board_simulate[@check_attacker[0]][@check_attacker[1]] = b_pawn
+          @board_simulate[index/8][index%8] = empty
+          return true if king_in_danger == false
+        end
+      end
+
+    end # End of white attacker
+
+    false
   end
 
   def king_in_danger
