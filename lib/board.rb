@@ -64,8 +64,8 @@ class Board
     @current_piece = nil
     @board_simulate = @board.clone.map(&:clone)
 
-    @sim_b_king_pos = []
-    @sim_w_king_pos = []
+    @sim_b_king_pos = [7, 4]
+    @sim_w_king_pos = [0, 4]
 
     @simulation = false
 
@@ -350,8 +350,8 @@ class Board
     # Assess checkmate criteria
     # checkmate_criteria() if @check == true
 
-    #@hehe = check_block if @check == true
 
+    
     @simulation = false
     restore_board_color
   end
@@ -412,7 +412,7 @@ class Board
   end
 
   def b_rook_moveset(row, column)
-    board = ""
+
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7)
@@ -454,158 +454,161 @@ class Board
   end
   
   def w_rook_moveset(row, column)
-    board = ""
+
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7
-        break if white_pieces.any?(@board[row][column+tile])
+        break if white_pieces.any?(board[row][column+tile])
         @color[row][column+tile] = 41
-        break if black_pieces.any?(@board[row][column+tile])
+        break if black_pieces.any?(board[row][column+tile])
       end
     end
 
     if (row+1).between?(0,7)
       for tile in 1..7 
         break if row+tile > 7
-        break if white_pieces.any?(@board[row+tile][column])
+        break if white_pieces.any?(board[row+tile][column])
         @color[row+tile][column] = 41
-        break if black_pieces.any?(@board[row+tile][column])
+        break if black_pieces.any?(board[row+tile][column])
       end
     end
 
     if (column-1).between?(0,7)
       for tile in 1..7 
         break if column-tile < 0
-        break if white_pieces.any?(@board[row][column-tile])
+        break if white_pieces.any?(board[row][column-tile])
         @color[row][column-tile] = 41
-        break if black_pieces.any?(@board[row][column-tile])
+        break if black_pieces.any?(board[row][column-tile])
       end
     end
 
     if (row-1).between?(0,7)
       for tile in 1..7 
         break if row-tile < 0
-        break if white_pieces.any?(@board[row-tile][column])
+        break if white_pieces.any?(board[row-tile][column])
         @color[row-tile][column] = 41
-        break if black_pieces.any?(@board[row-tile][column])
+        break if black_pieces.any?(board[row-tile][column])
       end
     end
   end
 
   def b_bishop_moveset(row, column)
-    board = ""
+
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7) && (row+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7 || row+tile > 7
-        break if black_pieces.any?(@board[row+tile][column+tile])
+        break if black_pieces.any?(board[row+tile][column+tile])
         @color[row+tile][column+tile] = 41
-        break if white_pieces.any?(@board[row+tile][column+tile])
+        break if white_pieces.any?(board[row+tile][column+tile])
       end
     end
 
     if (column-1).between?(0,7) && (row+1).between?(0,7)
       for tile in 1..7 
         break if column-tile < 0 || row+tile > 7
-        break if black_pieces.any?(@board[row+tile][column-tile])
+        break if black_pieces.any?(board[row+tile][column-tile])
         @color[row+tile][column-tile] = 41
-        break if white_pieces.any?(@board[row+tile][column-tile])
+        break if white_pieces.any?(board[row+tile][column-tile])
       end
     end
 
     if (row-1).between?(0,7) && (column-1).between?(0,7)
       for tile in 1..7
         break if row-tile < 0 || column-tile < 0
-        break if black_pieces.any?(@board[row-tile][column-tile])
+        break if black_pieces.any?(board[row-tile][column-tile])
         @color[row-tile][column-tile] = 41
-        break if white_pieces.any?(@board[row-tile][column-tile])
+        break if white_pieces.any?(board[row-tile][column-tile])
       end
     end
 
     if (row-1).between?(0,7) && (column+1).between?(0,7)
       for tile in 1..7 
         break if row-tile < 0 || column+tile > 7
-        break if black_pieces.any?(@board[row-tile][column+tile])
+        break if black_pieces.any?(board[row-tile][column+tile])
         @color[row-tile][column+tile] = 41
-        break if white_pieces.any?(@board[row-tile][column+tile])
+        break if white_pieces.any?(board[row-tile][column+tile])
       end
     end
   end
 
   def w_bishop_moveset(row, column)
-    board = ""
+
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+1).between?(0,7) && (row+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7 || row+tile > 7
-        break if white_pieces.any?(@board[row+tile][column+tile])
+        break if white_pieces.any?(board[row+tile][column+tile])
         @color[row+tile][column+tile] = 41
-        break if black_pieces.any?(@board[row+tile][column+tile])
+        break if black_pieces.any?(board[row+tile][column+tile])
       end
     end
 
     if (column-1).between?(0,7) && (row+1).between?(0,7)
       for tile in 1..7 
         break if column-tile < 0 || row+tile > 7
-        break if white_pieces.any?(@board[row+tile][column-tile])
+        break if white_pieces.any?(board[row+tile][column-tile])
         @color[row+tile][column-tile] = 41
-        break if black_pieces.any?(@board[row+tile][column-tile])
+        break if black_pieces.any?(board[row+tile][column-tile])
       end
     end
 
     if (row-1).between?(0,7) && (column-1).between?(0,7)
       for tile in 1..7
         break if row-tile < 0 || column-tile < 0
-        break if white_pieces.any?(@board[row-tile][column-tile])
+        break if white_pieces.any?(board[row-tile][column-tile])
         @color[row-tile][column-tile] = 41
-        break if black_pieces.any?(@board[row-tile][column-tile])
+        break if black_pieces.any?(board[row-tile][column-tile])
       end
     end
 
     if (row-1).between?(0,7) && (column+1).between?(0,7)
       for tile in 1..7 
         break if row-tile < 0 || column+tile > 7
-        break if white_pieces.any?(@board[row-tile][column+tile])
+        break if white_pieces.any?(board[row-tile][column+tile])
         @color[row-tile][column+tile] = 41
-        break if black_pieces.any?(@board[row-tile][column+tile])
+        break if black_pieces.any?(board[row-tile][column+tile])
       end
     end
   end
 
   def b_pawn_moveset(row, column)
     return unless (row-1).between?(0,7)
+    board = []
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
-    if @board[row-1][column] == empty
+    if board[row-1][column] == empty
       @color[row-1][column] = 41
     end
     if (column+1).between?(0,7)
-      @color[row-1][column+1] = 41 if white_pieces.any?(@board[row-1][column+1])
+      @color[row-1][column+1] = 41 if white_pieces.any?(board[row-1][column+1])
     end
     if (column-1).between?(0,7)
-      @color[row-1][column-1] = 41 if white_pieces.any?(@board[row-1][column-1])
+      @color[row-1][column-1] = 41 if white_pieces.any?(board[row-1][column-1])
     end
   end
 
   def w_pawn_moveset(row, column)
     return unless (row+1).between?(0,7)
+    board = []
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
-    if @board[row+1][column] == empty
+    if board[row+1][column] == empty
       @color[row+1][column] = 41
     end
     if (column+1).between?(0,7)
-      @color[row+1][column+1] = 41 if black_pieces.any?(@board[row+1][column+1])
+      @color[row+1][column+1] = 41 if black_pieces.any?(board[row+1][column+1])
     end
     if (column-1).between?(0,7)
-      @color[row+1][column-1] = 41 if black_pieces.any?(@board[row+1][column-1])
+      @color[row+1][column-1] = 41 if black_pieces.any?(board[row+1][column-1])
     end
   end
 
   def b_knight_moveset(row, column)
-    board = ""
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+2).between?(0,7)
@@ -643,39 +646,39 @@ class Board
   end
 
   def w_knight_moveset(row, column)
-    board = ""
+
     @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
 
     if (column+2).between?(0,7)
       if (row+1).between?(0,7)
-        @color[row+1][column+2] = 41 if @board[row+1][column+2] == empty || black_pieces.any?(@board[row+1][column+2])
+        @color[row+1][column+2] = 41 if board[row+1][column+2] == empty || black_pieces.any?(board[row+1][column+2])
       end
       if (row-1).between?(0,7)
-        @color[row-1][column+2] = 41 if @board[row-1][column+2] == empty || black_pieces.any?(@board[row-1][column+2])
+        @color[row-1][column+2] = 41 if board[row-1][column+2] == empty || black_pieces.any?(board[row-1][column+2])
       end
     end
     if (column-2).between?(0,7)
       if (row+1).between?(0,7)
-        @color[row+1][column-2] = 41 if @board[row+1][column-2] == empty || black_pieces.any?(@board[row+1][column-2])
+        @color[row+1][column-2] = 41 if board[row+1][column-2] == empty || black_pieces.any?(board[row+1][column-2])
       end
       if (row-1).between?(0,7)
-        @color[row-1][column-2] = 41 if @board[row-1][column-2] == empty || black_pieces.any?(@board[row-1][column-2])
+        @color[row-1][column-2] = 41 if board[row-1][column-2] == empty || black_pieces.any?(board[row-1][column-2])
       end
     end
     if (row+2).between?(0,7)
       if (column+1).between?(0,7)
-        @color[row+2][column+1] = 41 if @board[row+2][column+1] == empty || black_pieces.any?(@board[row+2][column+1])
+        @color[row+2][column+1] = 41 if board[row+2][column+1] == empty || black_pieces.any?(board[row+2][column+1])
       end
       if (column-1).between?(0,7)
-        @color[row+2][column-1] = 41 if @board[row+2][column-1] == empty || black_pieces.any?(@board[row+2][column-1])
+        @color[row+2][column-1] = 41 if board[row+2][column-1] == empty || black_pieces.any?(board[row+2][column-1])
       end
     end
     if (row-2).between?(0,7)
       if (column+1).between?(0,7)
-        @color[row-2][column+1] = 41 if @board[row-2][column+1] == empty || black_pieces.any?(@board[row-2][column+1])
+        @color[row-2][column+1] = 41 if board[row-2][column+1] == empty || black_pieces.any?(board[row-2][column+1])
       end
       if (column-1).between?(0,7)
-        @color[row-2][column-1] = 41 if @board[row-2][column-1] == empty || black_pieces.any?(@board[row-2][column-1])
+        @color[row-2][column-1] = 41 if board[row-2][column-1] == empty || black_pieces.any?(@oard[row-2][column-1])
       end
     end
   end
@@ -970,7 +973,7 @@ class Board
     tiles = []
     king_pos = []
     @current == "Black" ? king_pos = @w_king_pos : king_pos = @b_king_pos
-    
+
     # Identify king orientation: up, down, left, or right side of attacker?
     vert = "u" if @check_attacker[0] < king_pos[0]
     vert = "d" if @check_attacker[0] > king_pos[0]
@@ -1106,6 +1109,10 @@ class Board
 
     end # End of black ally to block
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 127c7d1 (added simulation provisions)
 
     false
   end
