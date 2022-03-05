@@ -336,7 +336,7 @@ class Board
     # Assess checkmate criteria
     # checkmate_criteria() if @check == true
 
-    @hehe = check_move_out if @check == true
+    @hehe = check_block if @check == true
 
     restore_board_color
   end
@@ -928,7 +928,71 @@ class Board
   end
 
   def check_block
-    true
+    return false if non_blockable_pieces.any?(@check_attacker[2])
+
+    vert = "n"
+    hori = "n"
+    ori = nil
+
+    tiles = []
+    king_pos = []
+    @current == "Black" ? king_pos = @w_king_pos : king_pos = @b_king_pos
+    
+    # Identify king orientation: up, down, left, or right side of attacker?
+    vert = "u" if @check_attacker[0] < king_pos[0]
+    vert = "d" if @check_attacker[0] > king_pos[0]
+    hori = "r" if @check_attacker[1] < king_pos[1]
+    hori = "l" if @check_attacker[1] > king_pos[1]    
+    ori = vert + hori
+
+    # Save all squares between the attacker and king
+    case ori
+    when "nr"
+      for i in 1..6
+        break if @check_attacker[1] + i == king_pos[1]
+        tiles << [king_pos[0], @check_attacker[1] + i]
+      end
+    when "un"
+      for i in 1..6
+        break if @check_attacker[0] + i == king_pos[0]
+        tiles << [@check_attacker[0] + i, king_pos[1]]
+      end
+    when "nl"
+      for i in 1..6
+        break if king_pos[1] + i == @check_attacker[1]
+        tiles << [king_pos[0], king_pos[1] + i]
+      end
+    when "dn"
+      for i in 1..6
+        break if king_pos[0] + i == @check_attacker[0]
+        tiles << [king_pos[0] + i, king_pos[1]]
+      end
+    when "ur"
+      for i in 1..6
+        break if @check_attacker[0] + i == king_pos[0]
+        tiles << [@check_attacker[0] + i, @check_attacker[1] + i]
+      end
+    when "dl"
+      for i in 1..6
+        break if king_pos[0] + i == @check_attacker[0]
+        tiles << [king_pos[0] + i, king_pos[1] + i]
+      end
+    when "dr"
+      for i in 1..6
+        break if @check_attacker[0] - i == king_pos[0]
+        tiles << [@check_attacker[0] - i, @check_attacker[1] + i]
+      end
+    when "ul"
+      for i in 1..6
+        break if king_pos[0] - i == @check_attacker[0]
+        tiles << [king_pos[0] - i, king_pos[1] + i]
+      end
+    end # end of case!
+
+    @hoho = tiles
+    @hoho << ori
+
+    false
   end
 
   def check_takedown

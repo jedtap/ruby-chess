@@ -61,4 +61,8 @@ module Symbols
     [" \u265A ", " \u265B ", " \u265C ", " \u265D ", " \u265E ", " \u265F "]
   end
 
+  def non_blockable_pieces
+    [" \u265F ", " \u265E ", " \u2659 ", " \u2658 "]
+  end
+
 end
