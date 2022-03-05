@@ -24,8 +24,17 @@ class Board
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
     #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
-    @board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
-    @board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+    #@board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
+    #@board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+
+    @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[6] = ["#{empty}","#{empty}","#{empty}","#{b_pawn}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+    @board[5] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[4] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[3] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[2] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    @board[0] = ["#{w_queen}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
     
 
     @dark = 44
@@ -57,7 +66,7 @@ class Board
 
     @sim_b_king_pos = []
     @sim_w_king_pos = []
-
+    @simulation = false
 
     @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
@@ -306,6 +315,8 @@ class Board
     # Update king's position
     @b_king_pos = [row_move, col_move] if @current_piece == b_king
     @w_king_pos = [row_move, col_move] if @current_piece == w_king
+    @sim_b_king_pos = @b_king_pos if @current_piece == b_king
+    @sim_w_king_pos = @w_king_pos if @current_piece == w_king
 
     # Deactivate castling for a rook w/ zero moves that got eliminated
     if @eliminated == b_rook && row_move == 7 && col_move == 0
@@ -338,6 +349,7 @@ class Board
 
     @hehe = check_block if @check == true
 
+    @simulation = false
     restore_board_color
   end
 
@@ -397,6 +409,9 @@ class Board
   end
 
   def b_rook_moveset(row, column)
+    board = []
+    @simulation == true ? board = @board[][]
+
     if (column+1).between?(0,7)
       for tile in 1..7 
         break if column+tile > 7
@@ -929,6 +944,7 @@ class Board
 
   def check_block
     return false if non_blockable_pieces.any?(@check_attacker[2])
+    @simulation = true
 
     vert = "n"
     hori = "n"
@@ -987,10 +1003,52 @@ class Board
         break if king_pos[0] - i == @check_attacker[0]
         tiles << [king_pos[0] - i, king_pos[1] + i]
       end
-    end # end of case!
+    end
 
-    @hoho = tiles
-    @hoho << ori
+    # For each square, find a black ally to block
+    if @current == "White"
+
+      tiles.each do |coor|
+
+        # Can a pawn block?
+        restore_board_color
+        @board_simulate = @board.clone.map(&:clone)
+        if (coor[0] + 1).between?(0,7)
+          if @board_simulate[coor[0] + 1][coor[1]] == b_pawn
+            @board_simulate[coor[0]][coor[1]] = b_pawn
+            @board_simulate[coor[0] + 1][coor[1]] = empty
+            @hoho << 99999
+          end
+
+          @hoho << 1
+          @hoho << @board_simulate[6][3]
+          @hoho << @board_simulate[5][3]
+          @hoho << @board_simulate[5][4]
+
+          return true if king_in_danger == false
+
+          @hoho << 2
+          @hoho << @board_simulate[6][3]
+          @hoho << @board_simulate[5][3]
+          @hoho << @board_simulate[5][4]
+        end
+
+        # Can a pawn block from double jump?
+
+        # Can a knight block?
+        # restore_board_color
+        # @board_simulate = @board.clone.map(&:clone)
+        # w_knight_moveset(coor[0], coor[1])
+        # @color.flatten.each_with_index do |item, index|
+        #   if item == 41 && @board_simulate.flatten[index] == b_knight
+        #     @board_simulate[coor[0]][coor[1]] = w_knight
+        #     @board_simulate[index / 8][index % 8] = empty
+        #   end
+        #   return true if king_in_danger == false
+        # end
+
+      end # end of tiles checking!
+    end # end of white tile checking
 
     false
   end
@@ -1047,7 +1105,18 @@ class Board
       restore_board_color
       b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
       b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
-      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_queen }
+      @color.flatten.each_with_index do | item, index | 
+        @hoho << "c:"
+        @hoho << @color[5][2]
+        @hoho << @color[5][3]
+        
+        return true if item == 41 && @board_simulate.flatten[index] == w_queen 
+      end
+
+      @hoho << 44
+      @hoho << @board_simulate[6][3]
+      @hoho << @board_simulate[5][3]
+      @hoho << @board_simulate[5][4]
 
     end
 
