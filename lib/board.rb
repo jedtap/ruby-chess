@@ -19,22 +19,22 @@ class Board
     # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
     
-    #@board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    #@board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
     #@board[0] = ["#{empty}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{empty}"]
     #@board[7] = ["#{empty}","#{empty}","#{empty}","#{b_queen}","#{b_king}","#{empty}","#{empty}","#{empty}"]
 
-    @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[6] = ["#{empty}","#{empty}","#{b_pawn}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[5] = ["#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[4] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[3] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[2] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    @board[0] = ["#{w_queen}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[6] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_rook}","#{empty}","#{empty}","#{empty}"]
+    # @board[5] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}"]
+    # @board[4] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[3] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[2] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
+    # @board[0] = ["#{w_rook}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
     
 
     @dark = 44
@@ -350,7 +350,7 @@ class Board
     # Assess checkmate criteria
     # checkmate_criteria() if @check == true
 
-    @hehe = check_block if @check == true
+    #@hehe = check_block if @check == true
 
     @simulation = false
     restore_board_color
@@ -1023,11 +1023,13 @@ class Board
     end
 
     @simulation = true
+    units = tiles.length - 1
 
     # For each square, find a black ally to block
     if @current == "White"
 
-      tiles.each do |coor|
+      for i in 0..units
+        coor = tiles[0]
 
         # Can a pawn block?
         restore_board_color
@@ -1099,88 +1101,11 @@ class Board
           end
           return true if king_in_danger == false
         end
-      end
-    end 
 
-    # For each square, find a white ally to block
-    if @current == "Black"
+      end # end of loop
 
-      tiles.each do |coor|
+    end # End of black ally to block
 
-        # Can a pawn block?
-        restore_board_color
-        @board_simulate = @board.clone.map(&:clone)
-        if (coor[0] - 1).between?(0,7)
-          if @board_simulate[coor[0] - 1][coor[1]] == w_pawn
-            @board_simulate[coor[0]][coor[1]] = w_pawn
-            @board_simulate[coor[0] - 1][coor[1]] = empty
-          end
-          return true if king_in_danger == false
-        end
-
-        # Can a pawn block via double jump?
-      #   restore_board_color
-      #   @board_simulate = @board.clone.map(&:clone)
-      #   if (coor[0] - 1).between?(0,7) && (coor[0] - 2).between?(0,7) && coor[0] - 2 == 1
-      #     if @board_simulate[coor[0] - 1][coor[1]] == empty && @board_simulate[coor[0] - 2][coor[1]] == w_pawn
-      #       @board_simulate[coor[0]][coor[1]] = w_pawn
-      #       @board_simulate[coor[0] - 2][coor[1]] = empty
-      #     end
-      #     return true if king_in_danger == false
-      #   end
-
-      #   # Can a knight block?
-      #   restore_board_color
-      #   @board_simulate = @board.clone.map(&:clone)
-      #   b_knight_moveset(coor[0], coor[1])
-      #   @color.flatten.each_with_index do |item, index|
-      #     if item == 41 && @board_simulate.flatten[index] == w_knight
-      #       @board_simulate[ coor[0] ][ coor[1] ] = w_knight
-      #       @board_simulate[index / 8][index % 8] = empty
-      #     end
-      #     return true if king_in_danger == false
-      #   end
-
-      #   # Can a rook block?
-      #   restore_board_color
-      #   @board_simulate = @board.clone.map(&:clone)
-      #   b_rook_moveset(coor[0], coor[1])
-      #   @color.flatten.each_with_index do |item, index|
-      #     if item == 41 && @board_simulate.flatten[index] == w_rook
-      #       @board_simulate[ coor[0] ][ coor[1] ] = w_rook
-      #       @board_simulate[index / 8][index % 8] = empty
-      #     end
-      #     return true if king_in_danger == false
-      #   end
-
-      #   # Can a bishop block?
-      #   restore_board_color
-      #   @board_simulate = @board.clone.map(&:clone)
-      #   b_bishop_moveset(coor[0], coor[1])
-      #   @color.flatten.each_with_index do |item, index|
-      #     if item == 41 && @board_simulate.flatten[index] == w_bishop
-      #       @board_simulate[ coor[0] ][ coor[1] ] = w_bishop
-      #       @board_simulate[index / 8][index % 8] = empty
-      #     end
-      #     return true if king_in_danger == false
-      #   end
-
-      #   # Can a queen block?
-      #   restore_board_color
-      #   @board_simulate = @board.clone.map(&:clone)
-      #   b_bishop_moveset(coor[0], coor[1])
-      #   b_rook_moveset(coor[0], coor[1])
-      #   @color.flatten.each_with_index do |item, index|
-      #     if item == 41 && @board_simulate.flatten[index] == w_queen
-      #       @board_simulate[ coor[0] ][ coor[1] ] = w_queen
-      #       @board_simulate[index / 8][index % 8] = empty
-      #     end
-      #     return true if king_in_danger == false
-      #   end
-
-
-      end
-    end
 
     false
   end
