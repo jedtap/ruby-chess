@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require 'yaml'
 require_relative "symbols"
 require_relative "board"
 
@@ -11,6 +12,8 @@ class Game
     @movement = []
     @select_move = []
     @non_check_area = true
+    @quit = false
+    @save = false
   end
 
   def play
@@ -20,6 +23,9 @@ class Game
         @board.print_board
         puts "Move makes your king in check! Try again..\n" if @non_check_area == false
         select_piece
+        break if @quit == true
+        break if @save == true
+
         @board.color_origin(@origin)
         @board.print_board
         @select_move = select_move
@@ -27,6 +33,9 @@ class Game
         break if @non_check_area == true
         
       end
+      break if @quit == true
+      break if @save == true
+
       @board.simulation_off
       @board.restore_board_color
       @board.valid_select?(@origin[0], @origin[1], @current)
@@ -49,12 +58,22 @@ class Game
   def select_piece
     puts "#{@current}'s Turn!\n"
     puts "Enter coordinates of the piece you want to move,"
-    puts "enter [1] to save, or [0] to quit."
+    puts "enter [s] to save & quit, or [x] to quit without saving"
     loop do
       print "Input: "
       @origin = gets
-      row = @origin[1].to_i - 1
       column = @origin[0].to_s.downcase.ord - 97
+
+      if column == 18
+        save
+        @save = true
+        return
+      elsif column == 23
+        @quit = true
+        return
+      end
+
+      row = @origin[1].to_i - 1
       @origin = [row, column]
       return if row.between?(0,7) && column.between?(0,7) && @board.valid_select?(row, column, @current)
 
@@ -75,6 +94,23 @@ class Game
     end
   end
 
+  def load
+    begin
+      data = YAML.load(File.open("lib/save_game.yaml", "r").read)
+
+      @current = data[:current]
+      @origin = data[:origin]
+      @movement = data[:movement]
+      @select_move = data[:select_move]
+      @non_check_area = data[:non_check_area]
+      @quit = false
+      @save = false
+
+    rescue StandardError
+      nil
+    end
+  end
+
   private
 
   def introduction   
@@ -84,16 +120,37 @@ class Game
     Goodluck and have fun!
     Enter..
     [1] To start a player vs player game
-    [2] To start a player vs computer game
-    [3] To resume from saved game
+    [2] To resume from saved game
     HEREDOC
     loop do
       print "Input: "
       input = gets[0].to_i
-      break if input.between?(1,1)
+      if input == 2
+        load
+        @board.load
+        break
+      end
+      break if input.between?(1,2)
 
       puts "Invalid input.. Try again."
     end
   end 
+
+  def save
+    data = {
+
+      current: @current,
+      origin: @origin,
+      movement: @movement,
+      select_move: @select_move,
+      non_check_area: @non_check_area,
+
+    }
+    file = File.open("lib/save_game.yaml","w")
+    file.puts YAML.dump(data)
+    file.close
+
+    @board.save
+  end
 
 end # End of Game class!

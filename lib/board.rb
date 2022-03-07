@@ -10,24 +10,19 @@
 #   bg_cyan     46
 #   bg_gray     47
 
+require 'yaml'
 require_relative "symbols"
 
 class Board
   include Symbols
 
   def initialize
-    # @board = [[],[],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],[],[]]
     @board = [["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"], ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"],["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]]
-    
-    # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
-    # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
-    # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
-    
-    @board[0] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{w_king}","#{empty}","#{empty}","#{empty}"]
-    @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
-    #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    #@board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+
+    @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
+    @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
+    @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
 
     @dark = 44
     @light = 1
@@ -60,15 +55,7 @@ class Board
     @sim_w_king_pos = [0, 4]
 
     @simulation = false
-
-    @hehe = "" #!!!!!!!!!!!!!!!!!!!!!!!
-    @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
-
-    # Additional changes:
-    # 
-    # rules for stalemate
-    # save to YAML
-    # rubocop
+    @end_game_timer = 50
 
   end
 
@@ -91,7 +78,6 @@ class Board
     puts "    a  b  c  d  e  f  g  h\n\n"
 
     puts "Check!\n\n" if @check == true
-    print "test criteria: #{@checkmate}. test: #{@hoho}\n" #!!!!!!!!!!!!!!!!!!!!!!!
 
   end
 
@@ -126,7 +112,7 @@ class Board
       if row == 6
         @color[row-2][column] = 41 if @board[row-2][column] == empty
         @en_passant = [column]
-        
+
         # Save pawns eligible to do en-passant against current player
         # En passant turn is set to 2: 1 turn after current player and other for enemy turn 
         if (column-1).between?(0,7)
@@ -142,7 +128,7 @@ class Board
       @pawn_color = "Black"
     when w_pawn
       return false unless (row+1).between?(0,7)
-      
+
       w_pawn_moveset(row, column)
 
       # En-passant attack
@@ -150,7 +136,7 @@ class Board
         if @en_passant.length >= 3
           @color[row+1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[2]]
         end
-        if @en_passant.length >=2
+        if @en_passant.length >= 2
           @color[row+1][@en_passant[0]] = 45 if @board[row][column] == @board[row][@en_passant[1]]
         end
       end
@@ -159,7 +145,7 @@ class Board
       if row == 1
         @color[row+2][column] = 41 if @board[row+2][column] == empty
         @en_passant = [column]
-        
+
         # Save pawns eligible to do en-passant against current player
         # En passant turn is set to 2: 1 turn after current player and other for enemy turn 
         if (column-1).between?(0,7)
@@ -173,7 +159,7 @@ class Board
       end
       @promotion = true if (row+1) == 7
       @pawn_color = "White"
-    
+
     when b_rook
       b_rook_moveset(row, column)
       return false unless @color.flatten.any?(41)
@@ -185,10 +171,10 @@ class Board
       return false unless @color.flatten.any?(41)
 
       @w_castling[0] = false if row == 0 && column == 0
-      @w_castling[2] = false if row == 0 && column == 7     
+      @w_castling[2] = false if row == 0 && column == 7
     when b_king
       b_king_moveset(row,column)
-      
+
       # Castling logic
       if @b_castling[1] == true
         if @b_castling[0] == true && @board[row][column-1] == empty && @board[row][column-2] == empty && @board[row][column-3] == empty
@@ -252,7 +238,7 @@ class Board
     col_orig = coordinates[1]
     row_move = coordinates[2]
     col_move = coordinates[3]
-    
+
     restore_board_color
     @board_simulate = @board.clone.map(&:clone)
     @board_simulate[row_move][col_move] = @board_simulate[row_orig][col_orig]
@@ -260,7 +246,7 @@ class Board
 
     @sim_b_king_pos = [row_move, col_move] if @board_simulate[row_move][col_move] == b_king
     @sim_w_king_pos = [row_move, col_move] if @board_simulate[row_move][col_move] == w_king
-    
+
     @simulation = true
     return true if i_king_in_danger == false
 
@@ -322,6 +308,9 @@ class Board
       checkmate_criteria if @check == true
       @simulation = false
     end
+
+    # Capturing a piece resets end game timer
+    @eliminated == empty ? @end_game_timer -= 1 : @end_game_timer = 50
 
     # Assess a stalemate
     stalemate_criteria
@@ -1495,15 +1484,106 @@ class Board
 
   def stalemate_criteria
 
-# king vs king
-# king, bishop vs king
-# king, knight vs king
-# king, knight, knight, vs king
+    # King vs king
+    @stalemate = true if @board.flatten.count(empty) == 62
 
-# no legal moves but not in check --> stalemate
+    # Black king vs White bishop and White King
+    @stalemate = true if @board.flatten.count(empty) == 61 && @board.flatten.count(w_bishop) == 1
 
-#50 moves
+    # White king vs Black bishop and black King
+    @stalemate = true if @board.flatten.count(empty) == 61 && @board.flatten.count(b_bishop) == 1
+
+    # Black king vs White knight/s and White King
+    @stalemate = true if @board.flatten.count(empty) == 60 && @board.flatten.count(w_knight) == 2
+    @stalemate = true if @board.flatten.count(empty) == 61 && @board.flatten.count(w_knight) == 1
+
+    # White king vs Black knight/s and White King
+    @stalemate = true if @board.flatten.count(empty) == 60 && @board.flatten.count(b_knight) == 2
+    @stalemate = true if @board.flatten.count(empty) == 61 && @board.flatten.count(b_knight) == 1
+
+    # 50 moves but no progress
+    @stalemate = true if @end_game_timer == 0
+    
 
   end
+
+  def save
+    data = {
+
+      board: @board,
+      en_passant: @en_passant,
+      en_passant_turn: @en_passant_turn,
+
+      promotion: @promotion,
+      pawn_color: @pawn_color,
+
+      b_castling: @b_castling,
+      w_castling: @w_castling,
+
+      eliminated: @eliminated,
+
+      check: @check,
+      king_in_check: @king_in_check,
+      check_attacker: @check_attacker,
+      current: @current,
+
+      checkmate: @checkmate,
+      stalemate: @stalemate,
+      b_king_pos: @b_king_pos,
+      w_king_pos: @w_king_pos,
+      current_piece: @current_piece,
+      board_simulate: @board_simulate,
+
+      sim_b_king_pos: @sim_b_king_pos,
+      sim_w_king_pos: @sim_w_king_pos,
+
+      simulation: @simulation,
+      end_game_timer: @end_game_timer
+
+    }
+    file = File.open("lib/save_board.yaml","w")
+    file.puts YAML.dump(data)
+    file.close
+  end
+
+  def load
+    begin
+      data = YAML.load(File.open("lib/save_board.yaml", "r").read)
+
+      @board = data[:board]
+      @en_passant = data[:en_passant]
+      @en_passant_turn = data[:en_passant_turn]
+
+      @promotion = data[:promotion]
+      @pawn_color = data[:pawn_color]
+
+      @b_castling = data[:b_castling]
+      @w_castling = data[:w_castling]
+
+      @eliminated = data[:eliminated]
+
+      @check = data[:check]
+      @king_in_check = data[:king_in_check]
+      @check_attacker = data[:check_attacker]
+      @current = data[:current]
+
+      @checkmate = data[:checkmate]
+      @stalemate = data[:stalemate]
+      @b_king_pos = data[:b_king_pos]
+      @w_king_pos = data[:w_king_pos]
+      @current_piece = data[:current_piece]
+      @board_simulate = data[:board_simulate]
+
+      @sim_b_king_pos = data[:sim_b_king_pos]
+      @sim_w_king_pos  = data[:sim_w_king_pos]
+
+      @simulation = data[:simulation]
+      @end_game_timer = data[:end_game_timer]
+
+    rescue StandardError
+      nil
+    end
+  end
+
 
 end # End of board class!

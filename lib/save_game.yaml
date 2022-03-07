@@ -1,0 +1,15 @@
+---
+:current: Black
+:origin: 's
+
+'
+:movement: 'h8
+
+'
+:select_move:
+- 0
+- 7
+- 7
+- 7
+- true
+:non_check_area: true
