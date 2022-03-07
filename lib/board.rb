@@ -22,12 +22,12 @@ class Board
     # @board[0] = ["#{w_rook}","#{w_knight}","#{w_bishop}","#{w_queen}","#{w_king}","#{w_bishop}","#{w_knight}","#{w_rook}"]
     # @board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
     # @board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    # @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
+     @board[7] = ["#{b_rook}","#{b_knight}","#{b_bishop}","#{b_queen}","#{b_king}","#{b_bishop}","#{b_knight}","#{b_rook}"]
     
-    @board[0] = ["#{w_rook}","#{empty}","#{empty}","#{w_queen}","#{w_king}","#{empty}","#{empty}","#{w_rook}"]
-    #@board[1] = ["#{w_pawn}","#{w_pawn}","#{w_pawn}","#{w_pawn}","#{empty}","#{w_pawn}","#{w_pawn}","#{w_pawn}"]
+    @board[0] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{w_king}","#{empty}","#{empty}","#{empty}"]
+    @board[1] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}","#{empty}"]
     #@board[6] = ["#{b_pawn}","#{b_pawn}","#{b_pawn}","#{b_pawn}","#{empty}","#{b_pawn}","#{b_pawn}","#{b_pawn}"]
-    @board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}"]
+    #@board[7] = ["#{empty}","#{empty}","#{empty}","#{empty}","#{b_king}","#{empty}","#{empty}","#{empty}"]
 
     @dark = 44
     @light = 1
@@ -65,8 +65,7 @@ class Board
     @hoho = [] #!!!!!!!!!!!!!!!!!!!!!!!
 
     # Additional changes:
-    # in valid_area? any move to any piece should not let you be open for a check 
-    # castling and en-passant can lead into a check
+    # 
     # rules for stalemate
     # save to YAML
     # rubocop
@@ -188,30 +187,7 @@ class Board
       @w_castling[0] = false if row == 0 && column == 0
       @w_castling[2] = false if row == 0 && column == 7     
     when b_king
-      if (column+1).between?(0,7)
-        @color[row][column+1] = 41 if @board[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
-        if (row+1).between?(0,7)
-          @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || white_pieces.any?(@board[row-1][column+1])
-        end
-      end
-      if (column-1).between?(0,7)
-        @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
-        if (row+1).between?(0,7)
-          @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
-        end
-      end
-      if (row+1).between?(0,7)
-        @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
-      end
-      if (row-1).between?(0,7)
-        @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
-      end
+      b_king_moveset(row,column)
       
       # Castling logic
       if @b_castling[1] == true
@@ -225,30 +201,7 @@ class Board
       return false unless @color.flatten.any?(41)
       @b_castling[1] = false
     when w_king
-      if (column+1).between?(0,7)
-        @color[row][column+1] = 41 if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
-        if (row+1).between?(0,7)
-          @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
-        end
-      end
-      if (column-1).between?(0,7)
-        @color[row][column-1] = 41 if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
-        if (row+1).between?(0,7)
-          @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
-        end
-        if (row-1).between?(0,7)
-          @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
-        end
-      end
-      if (row+1).between?(0,7)
-        @color[row+1][column] = 41 if @board[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
-      end
-      if (row-1).between?(0,7)
-        @color[row-1][column] = 41 if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
-      end
+      w_king_moveset(row,column)
 
       # Castling logic
       if @w_castling[1] == true
@@ -291,6 +244,29 @@ class Board
     @current = "White" if white_pieces.any?(@board[row][column])
     @current = "Black" if black_pieces.any?(@board[row][column])
     @current_piece = @board[row][column]
+  end
+
+  def non_check_area?(coordinates)
+    # Get row and column values of origin and target move
+    row_orig = coordinates[0]
+    col_orig = coordinates[1]
+    row_move = coordinates[2]
+    col_move = coordinates[3]
+    
+    restore_board_color
+    @board_simulate = @board.clone.map(&:clone)
+    @board_simulate[row_move][col_move] = @board_simulate[row_orig][col_orig]
+    @board_simulate[row_orig][col_orig] = empty
+
+    @sim_b_king_pos = [row_move, col_move] if @board_simulate[row_move][col_move] == b_king
+    @sim_w_king_pos = [row_move, col_move] if @board_simulate[row_move][col_move] == w_king
+    
+    @simulation = true
+    return true if i_king_in_danger == false
+
+    restore_board_color
+    @simulation = false
+    false
   end
 
   def valid_area?(row, column)
@@ -346,6 +322,9 @@ class Board
       checkmate_criteria if @check == true
       @simulation = false
     end
+
+    # Assess a stalemate
+    stalemate_criteria
 
     restore_board_color
   end
@@ -1383,6 +1362,148 @@ class Board
     end
 
     false
+  end
+
+  def i_king_in_danger
+    # Same is king_in_danger but with different comparison for @current
+    # This is used to see if current player's move will make him open for a check
+
+    # Assess if White king is open to a check
+    if @current == "White"
+      restore_board_color
+      w_pawn_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_pawn }
+
+      restore_board_color
+      w_knight_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_knight }
+
+      restore_board_color
+      w_rook_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_rook }
+
+      restore_board_color
+      w_bishop_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_bishop }
+
+      restore_board_color
+      w_bishop_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      w_rook_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_queen }
+
+      restore_board_color
+      w_king_moveset(@sim_w_king_pos[0], @sim_w_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == b_king }
+
+    end
+
+    # Assess if Black king is open to a check
+    if @current == "Black"
+      restore_board_color
+      b_pawn_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_pawn }
+
+      restore_board_color
+      b_knight_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_knight }
+
+      restore_board_color
+      b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_rook }
+
+      restore_board_color
+      b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_bishop }
+
+      restore_board_color
+      b_bishop_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      b_rook_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_queen }
+
+      restore_board_color
+      b_king_moveset(@sim_b_king_pos[0], @sim_b_king_pos[1])
+      @color.flatten.each_with_index { | item, index | return true if item == 41 && @board_simulate.flatten[index] == w_king }
+
+    end
+
+    false
+  end
+
+  def simulation_off
+    @simulation = false
+  end
+
+  def b_king_moveset(row,column)
+    board = []
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
+
+    if (column+1).between?(0,7)
+      @color[row][column+1] = 41 if @board[row][column+1] == empty || white_pieces.any?(@board[row][column+1])
+      if (row+1).between?(0,7)
+        @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || white_pieces.any?(@board[row+1][column+1])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || white_pieces.any?(@board[row-1][column+1])
+      end
+    end
+    if (column-1).between?(0,7)
+      @color[row][column-1] = 41 if @board[row][column-1] == empty || white_pieces.any?(@board[row][column-1])
+      if (row+1).between?(0,7)
+        @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || white_pieces.any?(@board[row+1][column-1])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || white_pieces.any?(@board[row-1][column-1])
+      end
+    end
+    if (row+1).between?(0,7)
+      @color[row+1][column] = 41 if @board[row+1][column] == empty || white_pieces.any?(@board[row+1][column])
+    end
+    if (row-1).between?(0,7)
+      @color[row-1][column] = 41 if @board[row-1][column] == empty || white_pieces.any?(@board[row-1][column])
+    end
+  end
+
+  def w_king_moveset(row,column)
+    board = []
+    @simulation == true ? board = @board_simulate.clone.map(&:clone) : board = @board.clone.map(&:clone)
+
+    if (column+1).between?(0,7)
+      @color[row][column+1] = 41 if @board[row][column+1] == empty || black_pieces.any?(@board[row][column+1])
+      if (row+1).between?(0,7)
+        @color[row+1][column+1] = 41 if @board[row+1][column+1] == empty || black_pieces.any?(@board[row+1][column+1])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column+1] = 41 if @board[row-1][column+1] == empty || black_pieces.any?(@board[row-1][column+1])
+      end
+    end
+    if (column-1).between?(0,7)
+      @color[row][column-1] = 41 if @board[row][column-1] == empty || black_pieces.any?(@board[row][column-1])
+      if (row+1).between?(0,7)
+        @color[row+1][column-1] = 41 if @board[row+1][column-1] == empty || black_pieces.any?(@board[row+1][column-1])
+      end
+      if (row-1).between?(0,7)
+        @color[row-1][column-1] = 41 if @board[row-1][column-1] == empty || black_pieces.any?(@board[row-1][column-1])
+      end
+    end
+    if (row+1).between?(0,7)
+      @color[row+1][column] = 41 if @board[row+1][column] == empty || black_pieces.any?(@board[row+1][column])
+    end
+    if (row-1).between?(0,7)
+      @color[row-1][column] = 41 if @board[row-1][column] == empty || black_pieces.any?(@board[row-1][column])
+    end
+  end
+
+  def stalemate_criteria
+
+# king vs king
+# king, bishop vs king
+# king, knight vs king
+# king, knight, knight, vs king
+
+# no legal moves but not in check --> stalemate
+
+#50 moves
+
   end
 
 end # End of board class!

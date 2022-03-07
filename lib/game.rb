@@ -9,16 +9,29 @@ class Game
     @current = "White"
     @origin = []
     @movement = []
+    @select_move = []
+    @non_check_area = true
   end
 
   def play
     introduction
     loop do
-      @board.print_board
-      select_piece
+      loop do
+        @board.print_board
+        puts "Move makes your king in check! Try again..\n" if @non_check_area == false
+        select_piece
+        @board.color_origin(@origin)
+        @board.print_board
+        @select_move = select_move
+        @non_check_area = @board.non_check_area?(@select_move)
+        break if @non_check_area == true
+        
+      end
+      @board.simulation_off
+      @board.restore_board_color
+      @board.valid_select?(@origin[0], @origin[1], @current)
       @board.color_origin(@origin)
-      @board.print_board
-      @board.move_piece(select_move)
+      @board.move_piece(@select_move)
       break if @board.checkmate
       break if @board.stalemate
 
@@ -66,16 +79,13 @@ class Game
 
   def introduction   
     puts <<~HEREDOC
-
     Welcome to Chess board game on Ruby terminal!
     Checkmate the opponent's king and win!
     Goodluck and have fun!
-
     Enter..
     [1] To start a player vs player game
     [2] To start a player vs computer game
     [3] To resume from saved game
-
     HEREDOC
     loop do
       print "Input: "
